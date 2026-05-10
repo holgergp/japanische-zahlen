@@ -1,5 +1,7 @@
 # 数字 – Japanische Zahlen lernen
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/a1c45ee2-0648-40d4-8670-19f3b58d5125/deploy-status)](https://app.netlify.com/projects/japanische-zahlen/deploys)
+
 Eine interaktive Lern-App für japanische Zahlen von 0 bis 100, entwickelt für den Kurs **Japanisch A1.1.1** an der VHS Düsseldorf (Minna no Nihongo).
 
 🌐 **Live:** [https://holgergp.github.io/japanische-zahlen/](https://holgergp.github.io/japanische-zahlen/)

@@ -1,0 +1,3 @@
+[build]
+  command = "BASE_PATH=/ npm run build"
+  publish = "dist"
