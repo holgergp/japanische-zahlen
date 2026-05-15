@@ -103,7 +103,7 @@ export default function App() {
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
-    if (quizResult === null) {
+    if (tab === 1 && quizResult === null) {
       setCountdown(3);
       const id = setInterval(() => {
         setCountdown(c => {
@@ -116,7 +116,7 @@ export default function App() {
       }, 1000);
       return () => clearInterval(id);
     }
-  }, [quiz, quizResult]);
+  }, [tab, quiz, quizResult]);
 
   const nextFlash = useCallback(() => {
     setFlashIdx(i => (i + 1) % fullList.length);
