@@ -132,7 +132,6 @@ export default function App() {
     setQuiz(getQuizQuestion());
     setQuizResult(null);
     setSelected(null);
-    setCountdown(3);
   }, []);
 
   const switchQuizMode = (mode) => {
@@ -140,7 +139,6 @@ export default function App() {
     setQuiz(getQuizQuestion());
     setQuizResult(null);
     setSelected(null);
-    setCountdown(3);
   };
 
   const handleAnswer = (opt) => {
@@ -341,7 +339,7 @@ export default function App() {
               color: "#a090c0",
               fontSize: 14,
             }}>
-              Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> Sekunden angezeigt…
+              Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
             </div>
           ) : (
             quizMode === "zahl-romaji" ? (
