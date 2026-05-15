@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 const numbers = [
   { num: 0, kanji: "零", hiragana: "れい", romaji: "rei" },
@@ -100,6 +100,23 @@ export default function App() {
     "romaji-zahl": { correct: 0, total: 0 },
   });
   const [filterGroup, setFilterGroup] = useState("alle");
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    if (quizResult === null) {
+      setCountdown(3);
+      const id = setInterval(() => {
+        setCountdown(c => {
+          if (c <= 1) {
+            clearInterval(id);
+            return 0;
+          }
+          return c - 1;
+        });
+      }, 1000);
+      return () => clearInterval(id);
+    }
+  }, [quiz, quizResult]);
 
   const nextFlash = useCallback(() => {
     setFlashIdx(i => (i + 1) % fullList.length);
@@ -115,6 +132,7 @@ export default function App() {
     setQuiz(getQuizQuestion());
     setQuizResult(null);
     setSelected(null);
+    setCountdown(3);
   }, []);
 
   const switchQuizMode = (mode) => {
@@ -122,6 +140,7 @@ export default function App() {
     setQuiz(getQuizQuestion());
     setQuizResult(null);
     setSelected(null);
+    setCountdown(3);
   };
 
   const handleAnswer = (opt) => {
@@ -311,54 +330,69 @@ export default function App() {
             )}
           </div>
 
-          {quizMode === "zahl-romaji" ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 340 }}>
-              {quiz.options.map(opt => {
-                let bg = "rgba(255,255,255,0.05)";
-                let border = "rgba(255,255,255,0.12)";
-                let col = "#e8e0f0";
-                let subCol = "#7060a0";
-                if (selected !== null) {
-                  if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
-                  else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
-                }
-                return (
-                  <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                    padding: "12px 18px", borderRadius: 12, border: `1px solid ${border}`,
-                    background: bg, color: col, fontSize: 17, fontWeight: 600,
-                    cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
-                    textAlign: "left", display: "flex", flexDirection: "column", gap: 2,
-                  }}>
-                    <span>{opt.romaji}</span>
-                    <span style={{ fontSize: 12, color: subCol, fontWeight: 400 }}>{opt.hiragana}</span>
-                  </button>
-                );
-              })}
+          {countdown > 0 && !quizResult ? (
+            <div style={{
+              width: "100%", maxWidth: 340,
+              padding: "24px",
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(232,201,126,0.2)",
+              borderRadius: 20,
+              textAlign: "center",
+              color: "#a090c0",
+              fontSize: 14,
+            }}>
+              Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> Sekunden angezeigt…
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%", maxWidth: 340 }}>
-              {quiz.options.map(opt => {
-                let bg = "rgba(255,255,255,0.05)";
-                let border = "rgba(255,255,255,0.12)";
-                let col = "#e8e0f0";
-                let subCol = "#7060a0";
-                if (selected !== null) {
-                  if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
-                  else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
-                }
-                return (
-                  <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                    padding: "18px 8px", borderRadius: 12, border: `1px solid ${border}`,
-                    background: bg, color: col, fontSize: 28, fontWeight: 700,
-                    cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
-                    display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                  }}>
-                    <span>{opt.num}</span>
-                    <span style={{ fontSize: 11, fontFamily: "'Shippori Mincho', serif", color: subCol, fontWeight: 400 }}>{opt.kanji}</span>
-                  </button>
-                );
-              })}
-            </div>
+            quizMode === "zahl-romaji" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 340 }}>
+                {quiz.options.map(opt => {
+                  let bg = "rgba(255,255,255,0.05)";
+                  let border = "rgba(255,255,255,0.12)";
+                  let col = "#e8e0f0";
+                  let subCol = "#7060a0";
+                  if (selected !== null) {
+                    if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
+                    else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
+                  }
+                  return (
+                    <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
+                      padding: "12px 18px", borderRadius: 12, border: `1px solid ${border}`,
+                      background: bg, color: col, fontSize: 17, fontWeight: 600,
+                      cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
+                      textAlign: "left", display: "flex", flexDirection: "column", gap: 2,
+                    }}>
+                      <span>{opt.romaji}</span>
+                      <span style={{ fontSize: 12, color: subCol, fontWeight: 400 }}>{opt.hiragana}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%", maxWidth: 340 }}>
+                {quiz.options.map(opt => {
+                  let bg = "rgba(255,255,255,0.05)";
+                  let border = "rgba(255,255,255,0.12)";
+                  let col = "#e8e0f0";
+                  let subCol = "#7060a0";
+                  if (selected !== null) {
+                    if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
+                    else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
+                  }
+                  return (
+                    <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
+                      padding: "18px 8px", borderRadius: 12, border: `1px solid ${border}`,
+                      background: bg, color: col, fontSize: 28, fontWeight: 700,
+                      cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+                    }}>
+                      <span>{opt.num}</span>
+                      <span style={{ fontSize: 11, fontFamily: "'Shippori Mincho', serif", color: subCol, fontWeight: 400 }}>{opt.kanji}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )
           )}
 
           {quizResult && (
