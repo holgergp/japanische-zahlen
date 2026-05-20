@@ -297,7 +297,7 @@ export default function App() {
             border: "1px solid rgba(232,201,126,0.2)",
             borderRadius: 20,
             textAlign: "center",
-            marginBottom: 8,
+            marginBottom: 4,
             flexShrink: 0,
           }}>
             {quizMode === "zahl-romaji" ? (
@@ -327,8 +327,8 @@ export default function App() {
             )}
           </div>
 
-          {/* Answer / Countdown / Result area — flexes to fill remaining space */}
-          <div style={{ width: "100%", maxWidth: 340, flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          {/* Answer / Countdown / Result area */}
+          <div style={{ width: "100%", maxWidth: 340, marginTop: 4 }}>
             {countdown > 0 && !quizResult ? (
               <div style={{
                 padding: "20px",
