@@ -176,8 +176,6 @@ export default function App() {
 
   return (
     <div className="app-root" style={{
-      display: "flex",
-      flexDirection: "column",
       background: "linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%)",
       fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif",
       color: "#e8e0f0",
@@ -344,7 +342,7 @@ export default function App() {
                 Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
               </div>
             ) : !quizResult ? (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, width: "100%" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, width: "100%" }}>
                 {quiz.options.map(opt => {
                   let bg = "rgba(255,255,255,0.05)";
                   let border = "rgba(255,255,255,0.12)";
@@ -356,12 +354,12 @@ export default function App() {
                   }
                   return (
                     <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                      padding: quizMode === "zahl-romaji" ? "10px 8px" : "14px 8px",
+                      padding: quizMode === "zahl-romaji" ? "8px 4px" : "12px 4px",
                       borderRadius: 12,
                       border: `1px solid ${border}`,
                       background: bg,
                       color: col,
-                      fontSize: quizMode === "zahl-romaji" ? "clamp(11px, 3.2vw, 15px)" : 28,
+                      fontSize: quizMode === "zahl-romaji" ? "clamp(14px, 3.8vw, 17px)" : 28,
                       fontWeight: quizMode === "zahl-romaji" ? 600 : 700,
                       cursor: quizResult ? "default" : "pointer",
                       transition: "all 0.2s",
