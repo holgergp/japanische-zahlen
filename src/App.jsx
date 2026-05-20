@@ -175,8 +175,7 @@ export default function App() {
   });
 
   return (
-    <div style={{
-      minHeight: "100dvh",
+    <div className="app-root" style={{
       display: "flex",
       flexDirection: "column",
       background: "linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%)",
@@ -188,7 +187,7 @@ export default function App() {
         textAlign: "center",
         padding: "16px 16px 8px",
         borderBottom: "1px solid rgba(255,255,255,0.1)",
-        marginBottom: "12px",
+        marginBottom: "8px",
         flexShrink: 0,
       }}>
         <div style={{ fontSize: 36, letterSpacing: 4, fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", marginBottom: 4 }}>数字</div>
@@ -197,7 +196,7 @@ export default function App() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 12, flexShrink: 0 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 8, flexShrink: 0 }}>
         {TABS.map((t, i) => (
           <button key={t} onClick={() => setTab(i)} style={{
             padding: "8px 18px",
@@ -223,7 +222,7 @@ export default function App() {
             onClick={() => setShowAnswer(a => !a)}
             style={{
               width: "100%",
-              maxWidth: "100%",
+              maxWidth: 340,
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(232,201,126,0.25)",
               borderRadius: 20,
@@ -253,7 +252,7 @@ export default function App() {
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+          <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
             <button onClick={prevFlash} style={navBtn}>← Zurück</button>
             <button onClick={() => setShowAnswer(a => !a)} style={{ ...navBtn, background: "rgba(232,201,126,0.1)", borderColor: "rgba(232,201,126,0.4)", color: "#e8c97e" }}>
               {showAnswer ? "Verstecken" : "Aufdecken"}
@@ -261,7 +260,7 @@ export default function App() {
             <button onClick={nextFlash} style={navBtn}>Weiter →</button>
           </div>
 
-          <div style={{ maxWidth: "100%", width: "100%", marginTop: 16, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 12, borderLeft: "3px solid #e8c97e", fontSize: 12, color: "#9080b0", lineHeight: 1.7 }}>
+          <div style={{ maxWidth: 340, width: "100%", marginTop: 12, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 12, borderLeft: "3px solid #e8c97e", fontSize: 12, color: "#9080b0", lineHeight: 1.7 }}>
             <strong style={{ color: "#e8c97e", display: "block", marginBottom: 4 }}>💡 Tipp: So funktionieren Zahlen auf Japanisch</strong>
             Zahlen werden aus Grundbausteinen zusammengesetzt:<br />
             <span style={{ color: "#c8b0e8" }}>十 (jū)</span> = 10 · <span style={{ color: "#c8b0e8" }}>二十 (ni-jū)</span> = 2×10 = 20<br />
@@ -272,8 +271,8 @@ export default function App() {
 
       {/* ── QUIZ TAB ── */}
       {tab === 1 && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "auto" }}>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 4, flexShrink: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "hidden" }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 8, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 4, flexShrink: 0 }}>
             {QUIZ_MODES.map(m => (
               <button key={m.id} onClick={() => switchQuizMode(m.id)} style={{
                 padding: "7px 14px",
@@ -289,22 +288,23 @@ export default function App() {
             ))}
           </div>
 
-          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 12 }}>
+          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 8, flexShrink: 0 }}>
             ✓ {score[quizMode].correct} / {score[quizMode].total} richtig
           </div>
 
           <div style={{
-            width: "100%", maxWidth: "100%",
-            padding: "20px 16px",
+            width: "100%", maxWidth: 340,
+            padding: "16px",
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(232,201,126,0.2)",
             borderRadius: 20,
             textAlign: "center",
-            marginBottom: 12,
+            marginBottom: 8,
+            flexShrink: 0,
           }}>
             {quizMode === "zahl-romaji" ? (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 12, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
                   Wie lautet die Aussprache?
                 </div>
                 <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontWeight: 700, color: "#e8c97e", lineHeight: 1, marginBottom: 4 }}>
@@ -316,7 +316,7 @@ export default function App() {
               </>
             ) : (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 12, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
                   Welche Zahl ist das?
                 </div>
                 <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontWeight: 700, color: "#e8c97e", letterSpacing: 1, marginBottom: 4 }}>
@@ -329,22 +329,22 @@ export default function App() {
             )}
           </div>
 
-          {countdown > 0 && !quizResult ? (
-            <div style={{
-              width: "100%", maxWidth: "100%",
-              padding: "24px",
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(232,201,126,0.2)",
-              borderRadius: 20,
-              textAlign: "center",
-              color: "#a090c0",
-              fontSize: 14,
-            }}>
-              Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
-            </div>
-          ) : (
-            quizMode === "zahl-romaji" ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: "100%" }}>
+          {/* Answer / Countdown / Result area — flexes to fill remaining space */}
+          <div style={{ width: "100%", maxWidth: 340, flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            {countdown > 0 && !quizResult ? (
+              <div style={{
+                padding: "20px",
+                background: "rgba(255,255,255,0.04)",
+                border: "1px solid rgba(232,201,126,0.2)",
+                borderRadius: 20,
+                textAlign: "center",
+                color: "#a090c0",
+                fontSize: 14,
+              }}>
+                Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
+              </div>
+            ) : !quizResult ? (
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, width: "100%" }}>
                 {quiz.options.map(opt => {
                   let bg = "rgba(255,255,255,0.05)";
                   let border = "rgba(255,255,255,0.12)";
@@ -356,59 +356,53 @@ export default function App() {
                   }
                   return (
                     <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                      padding: "10px 16px", borderRadius: 12, border: `1px solid ${border}`,
-                      background: bg, color: col, fontSize: 17, fontWeight: 600,
-                      cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
-                      textAlign: "left", display: "flex", flexDirection: "column", gap: 2,
+                      padding: quizMode === "zahl-romaji" ? "10px 8px" : "14px 8px",
+                      borderRadius: 12,
+                      border: `1px solid ${border}`,
+                      background: bg,
+                      color: col,
+                      fontSize: quizMode === "zahl-romaji" ? "clamp(11px, 3.2vw, 15px)" : 28,
+                      fontWeight: quizMode === "zahl-romaji" ? 600 : 700,
+                      cursor: quizResult ? "default" : "pointer",
+                      transition: "all 0.2s",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: 2,
+                      lineHeight: 1.3,
                     }}>
-                      <span>{opt.romaji}</span>
-                      <span style={{ fontSize: 12, color: subCol, fontWeight: 400 }}>{opt.hiragana}</span>
+                      {quizMode === "zahl-romaji" ? (
+                        <>
+                          <span>{opt.romaji}</span>
+                          <span style={{ fontSize: 10, color: subCol, fontWeight: 400 }}>{opt.hiragana}</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>{opt.num}</span>
+                          <span style={{ fontSize: 11, fontFamily: "'Shippori Mincho', serif", color: subCol, fontWeight: 400 }}>{opt.kanji}</span>
+                        </>
+                      )}
                     </button>
                   );
                 })}
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, width: "100%", maxWidth: "100%" }}>
-                {quiz.options.map(opt => {
-                  let bg = "rgba(255,255,255,0.05)";
-                  let border = "rgba(255,255,255,0.12)";
-                  let col = "#e8e0f0";
-                  let subCol = "#7060a0";
-                  if (selected !== null) {
-                    if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
-                    else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
-                  }
-                  return (
-                    <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                      padding: "14px 8px", borderRadius: 12, border: `1px solid ${border}`,
-                      background: bg, color: col, fontSize: 28, fontWeight: 700,
-                      cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
-                      display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
-                    }}>
-                      <span>{opt.num}</span>
-                      <span style={{ fontSize: 11, fontFamily: "'Shippori Mincho', serif", color: subCol, fontWeight: 400 }}>{opt.kanji}</span>
-                    </button>
-                  );
-                })}
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 24, marginBottom: 6 }}>{quizResult === "correct" ? "✅ Richtig!" : "❌ Falsch!"}</div>
+                {quizResult === "wrong" && (
+                  <div style={{ color: "#a090c0", fontSize: 13, marginBottom: 10 }}>
+                    Richtig war: <span style={{ color: "#e8c97e" }}>{quiz.correct.num}</span>
+                    {" · "}<span style={{ color: "#c8b0e8" }}>{quiz.correct.romaji}</span>
+                    {" · "}<span style={{ color: "#9080c0" }}>{quiz.correct.hiragana}</span>
+                  </div>
+                )}
+                <button onClick={nextQuiz} style={{ ...navBtn, background: "rgba(232,201,126,0.12)", borderColor: "rgba(232,201,126,0.5)", color: "#e8c97e", padding: "10px 28px" }}>
+                  Nächste Frage →
+                </button>
               </div>
-            )
-          )}
-
-          {quizResult && (
-            <div style={{ marginTop: 12, textAlign: "center" }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{quizResult === "correct" ? "✅ Richtig!" : "❌ Falsch!"}</div>
-              {quizResult === "wrong" && (
-                <div style={{ color: "#a090c0", fontSize: 13, marginBottom: 12 }}>
-                  Richtig war: <span style={{ color: "#e8c97e" }}>{quiz.correct.num}</span>
-                  {" · "}<span style={{ color: "#c8b0e8" }}>{quiz.correct.romaji}</span>
-                  {" · "}<span style={{ color: "#9080c0" }}>{quiz.correct.hiragana}</span>
-                </div>
-              )}
-              <button onClick={nextQuiz} style={{ ...navBtn, background: "rgba(232,201,126,0.12)", borderColor: "rgba(232,201,126,0.5)", color: "#e8c97e", padding: "10px 28px" }}>
-                Nächste Frage →
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
