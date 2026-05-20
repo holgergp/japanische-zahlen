@@ -176,26 +176,28 @@ export default function App() {
 
   return (
     <div style={{
-      minHeight: "100vh",
+      minHeight: "100dvh",
+      display: "flex",
+      flexDirection: "column",
       background: "linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%)",
       fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif",
       color: "#e8e0f0",
-      padding: "0 0 40px",
     }}>
       {/* Header */}
       <div style={{
         textAlign: "center",
-        padding: "32px 16px 16px",
+        padding: "16px 16px 8px",
         borderBottom: "1px solid rgba(255,255,255,0.1)",
-        marginBottom: "24px",
+        marginBottom: "12px",
+        flexShrink: 0,
       }}>
         <div style={{ fontSize: 36, letterSpacing: 4, fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", marginBottom: 4 }}>数字</div>
         <div style={{ fontSize: 13, color: "#a090c0", letterSpacing: 2, textTransform: "uppercase" }}>Japanische Zahlen · 0–100</div>
-        <div style={{ fontSize: 11, color: "#7060a0", marginTop: 4 }}>VHS Düsseldorf · Minna no Nihongo A1</div>
+        <div style={{ fontSize: 10, color: "#7060a0", marginTop: 4 }}>VHS Düsseldorf · Minna no Nihongo A1</div>
       </div>
 
       {/* Tabs */}
-      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 28 }}>
+      <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 12, flexShrink: 0 }}>
         {TABS.map((t, i) => (
           <button key={t} onClick={() => setTab(i)} style={{
             padding: "8px 18px",
@@ -214,15 +216,14 @@ export default function App() {
 
       {/* ── LERNEN TAB ── */}
       {tab === 0 && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px" }}>
-          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 16 }}>{flashIdx + 1} / {fullList.length}</div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "auto" }}>
+          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 8 }}>{flashIdx + 1} / {fullList.length}</div>
 
           <div
             onClick={() => setShowAnswer(a => !a)}
             style={{
               width: "100%",
-              maxWidth: 340,
-              minHeight: 220,
+              maxWidth: "100%",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(232,201,126,0.25)",
               borderRadius: 20,
@@ -231,15 +232,15 @@ export default function App() {
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              padding: 32,
+              padding: "24px 16px",
               boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
               userSelect: "none",
             }}
           >
-            <div style={{ fontSize: 80, fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", lineHeight: 1, marginBottom: 8 }}>
+            <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", lineHeight: 1, marginBottom: 8 }}>
               {card.num}
             </div>
-            <div style={{ fontSize: 32, fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8", marginBottom: showAnswer ? 16 : 0 }}>
+            <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8", marginBottom: showAnswer ? 16 : 0 }}>
               {card.kanji}
             </div>
             {showAnswer ? (
@@ -252,7 +253,7 @@ export default function App() {
             )}
           </div>
 
-          <div style={{ display: "flex", gap: 16, marginTop: 24 }}>
+          <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
             <button onClick={prevFlash} style={navBtn}>← Zurück</button>
             <button onClick={() => setShowAnswer(a => !a)} style={{ ...navBtn, background: "rgba(232,201,126,0.1)", borderColor: "rgba(232,201,126,0.4)", color: "#e8c97e" }}>
               {showAnswer ? "Verstecken" : "Aufdecken"}
@@ -260,7 +261,7 @@ export default function App() {
             <button onClick={nextFlash} style={navBtn}>Weiter →</button>
           </div>
 
-          <div style={{ maxWidth: 340, marginTop: 28, padding: "16px 20px", background: "rgba(255,255,255,0.03)", borderRadius: 12, borderLeft: "3px solid #e8c97e", fontSize: 12, color: "#9080b0", lineHeight: 1.7 }}>
+          <div style={{ maxWidth: "100%", width: "100%", marginTop: 16, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 12, borderLeft: "3px solid #e8c97e", fontSize: 12, color: "#9080b0", lineHeight: 1.7 }}>
             <strong style={{ color: "#e8c97e", display: "block", marginBottom: 4 }}>💡 Tipp: So funktionieren Zahlen auf Japanisch</strong>
             Zahlen werden aus Grundbausteinen zusammengesetzt:<br />
             <span style={{ color: "#c8b0e8" }}>十 (jū)</span> = 10 · <span style={{ color: "#c8b0e8" }}>二十 (ni-jū)</span> = 2×10 = 20<br />
@@ -271,8 +272,8 @@ export default function App() {
 
       {/* ── QUIZ TAB ── */}
       {tab === 1 && (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px" }}>
-          <div style={{ display: "flex", gap: 8, marginBottom: 20, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 4 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "auto" }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 12, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 4, flexShrink: 0 }}>
             {QUIZ_MODES.map(m => (
               <button key={m.id} onClick={() => switchQuizMode(m.id)} style={{
                 padding: "7px 14px",
@@ -288,40 +289,40 @@ export default function App() {
             ))}
           </div>
 
-          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 20 }}>
+          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 12 }}>
             ✓ {score[quizMode].correct} / {score[quizMode].total} richtig
           </div>
 
           <div style={{
-            width: "100%", maxWidth: 340,
-            padding: "28px 24px",
+            width: "100%", maxWidth: "100%",
+            padding: "20px 16px",
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(232,201,126,0.2)",
             borderRadius: 20,
             textAlign: "center",
-            marginBottom: 20,
+            marginBottom: 12,
           }}>
             {quizMode === "zahl-romaji" ? (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 16, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 12, textTransform: "uppercase", letterSpacing: 2 }}>
                   Wie lautet die Aussprache?
                 </div>
-                <div style={{ fontSize: 80, fontWeight: 700, color: "#e8c97e", lineHeight: 1, marginBottom: 4 }}>
+                <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontWeight: 700, color: "#e8c97e", lineHeight: 1, marginBottom: 4 }}>
                   {quiz.correct.num}
                 </div>
-                <div style={{ fontSize: 22, fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8" }}>
+                <div style={{ fontSize: "clamp(20px, 6vw, 22px)", fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8" }}>
                   {quiz.correct.kanji}
                 </div>
               </>
             ) : (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 16, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 12, textTransform: "uppercase", letterSpacing: 2 }}>
                   Welche Zahl ist das?
                 </div>
-                <div style={{ fontSize: 32, fontWeight: 700, color: "#e8c97e", letterSpacing: 1, marginBottom: 4 }}>
+                <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontWeight: 700, color: "#e8c97e", letterSpacing: 1, marginBottom: 4 }}>
                   {quiz.correct.romaji}
                 </div>
-                <div style={{ fontSize: 18, color: "#c8b0e8" }}>
+                <div style={{ fontSize: "clamp(16px, 5vw, 18px)", color: "#c8b0e8" }}>
                   {quiz.correct.hiragana}
                 </div>
               </>
@@ -330,7 +331,7 @@ export default function App() {
 
           {countdown > 0 && !quizResult ? (
             <div style={{
-              width: "100%", maxWidth: 340,
+              width: "100%", maxWidth: "100%",
               padding: "24px",
               background: "rgba(255,255,255,0.04)",
               border: "1px solid rgba(232,201,126,0.2)",
@@ -343,7 +344,7 @@ export default function App() {
             </div>
           ) : (
             quizMode === "zahl-romaji" ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 10, width: "100%", maxWidth: 340 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%", maxWidth: "100%" }}>
                 {quiz.options.map(opt => {
                   let bg = "rgba(255,255,255,0.05)";
                   let border = "rgba(255,255,255,0.12)";
@@ -355,7 +356,7 @@ export default function App() {
                   }
                   return (
                     <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                      padding: "12px 18px", borderRadius: 12, border: `1px solid ${border}`,
+                      padding: "10px 16px", borderRadius: 12, border: `1px solid ${border}`,
                       background: bg, color: col, fontSize: 17, fontWeight: 600,
                       cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
                       textAlign: "left", display: "flex", flexDirection: "column", gap: 2,
@@ -367,7 +368,7 @@ export default function App() {
                 })}
               </div>
             ) : (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, width: "100%", maxWidth: 340 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, width: "100%", maxWidth: "100%" }}>
                 {quiz.options.map(opt => {
                   let bg = "rgba(255,255,255,0.05)";
                   let border = "rgba(255,255,255,0.12)";
@@ -379,7 +380,7 @@ export default function App() {
                   }
                   return (
                     <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
-                      padding: "18px 8px", borderRadius: 12, border: `1px solid ${border}`,
+                      padding: "14px 8px", borderRadius: 12, border: `1px solid ${border}`,
                       background: bg, color: col, fontSize: 28, fontWeight: 700,
                       cursor: quizResult ? "default" : "pointer", transition: "all 0.2s",
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
@@ -394,7 +395,7 @@ export default function App() {
           )}
 
           {quizResult && (
-            <div style={{ marginTop: 24, textAlign: "center" }}>
+            <div style={{ marginTop: 12, textAlign: "center" }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>{quizResult === "correct" ? "✅ Richtig!" : "❌ Falsch!"}</div>
               {quizResult === "wrong" && (
                 <div style={{ color: "#a090c0", fontSize: 13, marginBottom: 12 }}>
@@ -413,8 +414,8 @@ export default function App() {
 
       {/* ── ALLE ZAHLEN TAB ── */}
       {tab === 2 && (
-        <div style={{ padding: "0 16px" }}>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", marginBottom: 20 }}>
+        <div style={{ padding: "0 16px", flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center", marginBottom: 12, flexShrink: 0 }}>
             {groups.map(g => (
               <button key={g.value} onClick={() => setFilterGroup(g.value)} style={{
                 padding: "5px 12px", borderRadius: 20, fontSize: 12,
@@ -426,7 +427,7 @@ export default function App() {
               }}>{g.label}</button>
             ))}
           </div>
-          <div style={{ maxWidth: 500, margin: "0 auto" }}>
+          <div style={{ maxWidth: 500, margin: "0 auto", width: "100%", overflow: "auto", flex: 1 }}>
             {filteredList.map(n => (
               <div key={n.num} style={{
                 display: "grid",
