@@ -77,17 +77,67 @@ const QUIZ_MODES = [
 
 const TABS = ["Lernen", "Quiz", "Alle Zahlen"];
 
-const navBtn = {
-  padding: "9px 16px",
-  borderRadius: 10,
-  border: "1px solid rgba(255,255,255,0.15)",
-  background: "rgba(255,255,255,0.05)",
-  color: "#c0b0d8",
-  cursor: "pointer",
-  fontSize: 13,
-};
-
 export default function App() {
+  const [theme, setTheme] = useState(() => {
+    const stored = localStorage.getItem("theme");
+    if (stored === "light" || stored === "dark") return stored;
+    return window.matchMedia?.("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: light)");
+    const handleChange = (e) => {
+      if (!localStorage.getItem("theme")) {
+        setTheme(e.matches ? "light" : "dark");
+      }
+    };
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    localStorage.setItem("theme", next);
+  };
+
+  const isDark = theme === "dark";
+
+  const colors = {
+    bg: isDark
+      ? "linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%)"
+      : "linear-gradient(135deg, #f3edf8 0%, #e6f0fa 50%, #d8e5f2 100%)",
+    textPrimary: isDark ? "#e8e0f0" : "#2a1e38",
+    textSecondary: isDark ? "#a090c0" : "#5d4c78",
+    textMuted: isDark ? "#7060a0" : "#80749e",
+    accentGold: isDark ? "#e8c97e" : "#aa8010",
+    accentPurple: isDark ? "#c8b0e8" : "#7b52ab",
+    success: isDark ? "#64dc82" : "#22a048",
+    error: isDark ? "#dc5050" : "#c92c2c",
+    borderDefault: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)",
+    cardBg: isDark ? "rgba(255,255,255,0.04)" : "rgba(255,255,255,0.65)",
+    cardBorder: isDark ? "rgba(232,201,126,0.25)" : "rgba(170,128,16,0.25)",
+    tipBg: isDark ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.45)",
+    tabBgActive: isDark ? "rgba(232,201,126,0.15)" : "rgba(170,128,16,0.12)",
+    btnNavBg: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.6)",
+    btnNavColor: isDark ? "#c0b0d8" : "#5d4c78",
+    btnNavBorder: isDark ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.12)",
+    btnToggleBg: isDark ? "rgba(232,201,126,0.1)" : "rgba(170,128,16,0.08)",
+    quizAnswerBg: isDark ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.7)",
+    quizCorrectBg: isDark ? "rgba(100,220,130,0.15)" : "rgba(34,160,72,0.12)",
+    quizWrongBg: isDark ? "rgba(220,80,80,0.15)" : "rgba(201,44,44,0.1)",
+  };
+
+  const navBtnStyle = {
+    padding: "9px 16px",
+    borderRadius: 10,
+    border: `1px solid ${colors.btnNavBorder}`,
+    background: colors.btnNavBg,
+    color: colors.btnNavColor,
+    cursor: "pointer",
+    fontSize: 13,
+  };
+
   const [tab, setTab] = useState(0);
   const [flashIdx, setFlashIdx] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -176,21 +226,45 @@ export default function App() {
 
   return (
     <div className="app-root" style={{
-      background: "linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%)",
+      background: colors.bg,
       fontFamily: "'Noto Sans JP', 'Hiragino Sans', sans-serif",
-      color: "#e8e0f0",
+      color: colors.textPrimary,
     }}>
       {/* Header */}
       <div style={{
+        position: "relative",
         textAlign: "center",
         padding: "16px 16px 8px",
-        borderBottom: "1px solid rgba(255,255,255,0.1)",
+        borderBottom: `1px solid ${colors.borderDefault}`,
         marginBottom: "8px",
         flexShrink: 0,
       }}>
-        <div style={{ fontSize: 36, letterSpacing: 4, fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", marginBottom: 4 }}>数字</div>
-        <div style={{ fontSize: 13, color: "#a090c0", letterSpacing: 2, textTransform: "uppercase" }}>Japanische Zahlen · 0–100</div>
-        <div style={{ fontSize: 10, color: "#7060a0", marginTop: 4 }}>VHS Düsseldorf · Minna no Nihongo A1</div>
+        <button
+          onClick={toggleTheme}
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            background: "transparent",
+            border: "none",
+            color: colors.textSecondary,
+            fontSize: 20,
+            cursor: "pointer",
+            padding: 8,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "50%",
+            transition: "background-color 0.2s",
+          }}
+          title={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+          aria-label={theme === "dark" ? "Helles Design aktivieren" : "Dunkles Design aktivieren"}
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
+        <div style={{ fontSize: 36, letterSpacing: 4, fontFamily: "'Shippori Mincho', serif", color: colors.accentGold, marginBottom: 4 }}>数字</div>
+        <div style={{ fontSize: 13, color: colors.textSecondary, letterSpacing: 2, textTransform: "uppercase" }}>Japanische Zahlen · 0–100</div>
+        <div style={{ fontSize: 10, color: colors.textMuted, marginTop: 4 }}>VHS Düsseldorf · Minna no Nihongo A1</div>
       </div>
 
       {/* Tabs */}
@@ -200,9 +274,9 @@ export default function App() {
             padding: "8px 18px",
             borderRadius: 24,
             border: "1px solid",
-            borderColor: tab === i ? "#e8c97e" : "rgba(255,255,255,0.15)",
-            background: tab === i ? "rgba(232,201,126,0.15)" : "transparent",
-            color: tab === i ? "#e8c97e" : "#a090c0",
+            borderColor: tab === i ? colors.accentGold : colors.borderDefault,
+            background: tab === i ? colors.tabBgActive : "transparent",
+            color: tab === i ? colors.accentGold : colors.textSecondary,
             cursor: "pointer",
             fontSize: 13,
             fontWeight: tab === i ? 700 : 400,
@@ -214,15 +288,15 @@ export default function App() {
       {/* ── LERNEN TAB ── */}
       {tab === 0 && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "auto" }}>
-          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 8 }}>{flashIdx + 1} / {fullList.length}</div>
+          <div style={{ color: colors.textMuted, fontSize: 12, marginBottom: 8 }}>{flashIdx + 1} / {fullList.length}</div>
 
           <div
             onClick={() => setShowAnswer(a => !a)}
             style={{
               width: "100%",
               maxWidth: 340,
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(232,201,126,0.25)",
+              background: colors.cardBg,
+              border: `1px solid ${colors.cardBorder}`,
               borderRadius: 20,
               display: "flex",
               flexDirection: "column",
@@ -230,39 +304,39 @@ export default function App() {
               justifyContent: "center",
               cursor: "pointer",
               padding: "24px 16px",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+              boxShadow: isDark ? "0 8px 32px rgba(0,0,0,0.4)" : "0 8px 24px rgba(0,0,0,0.06)",
               userSelect: "none",
             }}
           >
-            <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontFamily: "'Shippori Mincho', serif", color: "#e8c97e", lineHeight: 1, marginBottom: 8 }}>
+            <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontFamily: "'Shippori Mincho', serif", color: colors.accentGold, lineHeight: 1, marginBottom: 8 }}>
               {card.num}
             </div>
-            <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8", marginBottom: showAnswer ? 16 : 0 }}>
+            <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontFamily: "'Shippori Mincho', serif", color: colors.accentPurple, marginBottom: showAnswer ? 16 : 0 }}>
               {card.kanji}
             </div>
             {showAnswer ? (
-              <div style={{ textAlign: "center", borderTop: "1px solid rgba(255,255,255,0.1)", paddingTop: 16, width: "100%" }}>
-                <div style={{ fontSize: 22, color: "#e8e0f0", marginBottom: 6 }}>{card.hiragana}</div>
-                <div style={{ fontSize: 15, color: "#a090c0", fontStyle: "italic" }}>{card.romaji}</div>
+              <div style={{ textAlign: "center", borderTop: `1px solid ${colors.borderDefault}`, paddingTop: 16, width: "100%" }}>
+                <div style={{ fontSize: 22, color: colors.textPrimary, marginBottom: 6 }}>{card.hiragana}</div>
+                <div style={{ fontSize: 15, color: colors.textSecondary, fontStyle: "italic" }}>{card.romaji}</div>
               </div>
             ) : (
-              <div style={{ fontSize: 12, color: "#5050a0", marginTop: 12 }}>Tippen zum Aufdecken</div>
+              <div style={{ fontSize: 12, color: colors.textMuted, marginTop: 12 }}>Tippen zum Aufdecken</div>
             )}
           </div>
 
           <div style={{ display: "flex", gap: 16, marginTop: 12 }}>
-            <button onClick={prevFlash} style={navBtn}>← Zurück</button>
-            <button onClick={() => setShowAnswer(a => !a)} style={{ ...navBtn, background: "rgba(232,201,126,0.1)", borderColor: "rgba(232,201,126,0.4)", color: "#e8c97e" }}>
+            <button onClick={prevFlash} style={navBtnStyle}>← Zurück</button>
+            <button onClick={() => setShowAnswer(a => !a)} style={{ ...navBtnStyle, background: colors.btnToggleBg, borderColor: colors.cardBorder, color: colors.accentGold }}>
               {showAnswer ? "Verstecken" : "Aufdecken"}
             </button>
-            <button onClick={nextFlash} style={navBtn}>Weiter →</button>
+            <button onClick={nextFlash} style={navBtnStyle}>Weiter →</button>
           </div>
 
-          <div style={{ maxWidth: 340, width: "100%", marginTop: 12, padding: "12px 16px", background: "rgba(255,255,255,0.03)", borderRadius: 12, borderLeft: "3px solid #e8c97e", fontSize: 12, color: "#9080b0", lineHeight: 1.7 }}>
-            <strong style={{ color: "#e8c97e", display: "block", marginBottom: 4 }}>💡 Tipp: So funktionieren Zahlen auf Japanisch</strong>
+          <div style={{ maxWidth: 340, width: "100%", marginTop: 12, padding: "12px 16px", background: colors.tipBg, borderRadius: 12, borderLeft: `3px solid ${colors.accentGold}`, fontSize: 12, color: colors.textSecondary, lineHeight: 1.7 }}>
+            <strong style={{ color: colors.accentGold, display: "block", marginBottom: 4 }}>💡 Tipp: So funktionieren Zahlen auf Japanisch</strong>
             Zahlen werden aus Grundbausteinen zusammengesetzt:<br />
-            <span style={{ color: "#c8b0e8" }}>十 (jū)</span> = 10 · <span style={{ color: "#c8b0e8" }}>二十 (ni-jū)</span> = 2×10 = 20<br />
-            <span style={{ color: "#c8b0e8" }}>二十三 (ni-jū-san)</span> = 20+3 = 23
+            <span style={{ color: colors.accentPurple }}>十 (jū)</span> = 10 · <span style={{ color: colors.accentPurple }}>二十 (ni-jū)</span> = 2×10 = 20<br />
+            <span style={{ color: colors.accentPurple }}>二十三 (ni-jū-san)</span> = 20+3 = 23
           </div>
         </div>
       )}
@@ -270,14 +344,14 @@ export default function App() {
       {/* ── QUIZ TAB ── */}
       {tab === 1 && (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "0 16px", flex: 1, overflow: "hidden" }}>
-          <div style={{ display: "flex", gap: 8, marginBottom: 8, background: "rgba(255,255,255,0.04)", borderRadius: 14, padding: 4, flexShrink: 0 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 8, background: colors.cardBg, borderRadius: 14, padding: 4, flexShrink: 0 }}>
             {QUIZ_MODES.map(m => (
               <button key={m.id} onClick={() => switchQuizMode(m.id)} style={{
                 padding: "7px 14px",
                 borderRadius: 10,
                 border: "none",
-                background: quizMode === m.id ? "rgba(232,201,126,0.2)" : "transparent",
-                color: quizMode === m.id ? "#e8c97e" : "#7060a0",
+                background: quizMode === m.id ? colors.tabBgActive : "transparent",
+                color: quizMode === m.id ? colors.accentGold : colors.textMuted,
                 cursor: "pointer",
                 fontSize: 12,
                 fontWeight: quizMode === m.id ? 700 : 400,
@@ -286,15 +360,15 @@ export default function App() {
             ))}
           </div>
 
-          <div style={{ color: "#7060a0", fontSize: 12, marginBottom: 8, flexShrink: 0 }}>
+          <div style={{ color: colors.textMuted, fontSize: 12, marginBottom: 8, flexShrink: 0 }}>
             ✓ {score[quizMode].correct} / {score[quizMode].total} richtig
           </div>
 
           <div style={{
             width: "100%", maxWidth: 340,
             padding: "16px",
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(232,201,126,0.2)",
+            background: colors.cardBg,
+            border: `1px solid ${colors.cardBorder}`,
             borderRadius: 20,
             textAlign: "center",
             marginBottom: 4,
@@ -302,25 +376,25 @@ export default function App() {
           }}>
             {quizMode === "zahl-romaji" ? (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: colors.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
                   Wie lautet die Aussprache?
                 </div>
-                <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontWeight: 700, color: "#e8c97e", lineHeight: 1, marginBottom: 4 }}>
+                <div style={{ fontSize: "clamp(56px, 18vw, 80px)", fontWeight: 700, color: colors.accentGold, lineHeight: 1, marginBottom: 4 }}>
                   {quiz.correct.num}
                 </div>
-                <div style={{ fontSize: "clamp(20px, 6vw, 22px)", fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8" }}>
+                <div style={{ fontSize: "clamp(20px, 6vw, 22px)", fontFamily: "'Shippori Mincho', serif", color: colors.accentPurple }}>
                   {quiz.correct.kanji}
                 </div>
               </>
             ) : (
               <>
-                <div style={{ fontSize: 11, color: "#7060a0", marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
+                <div style={{ fontSize: 11, color: colors.textMuted, marginBottom: 8, textTransform: "uppercase", letterSpacing: 2 }}>
                   Welche Zahl ist das?
                 </div>
-                <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontWeight: 700, color: "#e8c97e", letterSpacing: 1, marginBottom: 4 }}>
+                <div style={{ fontSize: "clamp(24px, 7vw, 32px)", fontWeight: 700, color: colors.accentGold, letterSpacing: 1, marginBottom: 4 }}>
                   {quiz.correct.romaji}
                 </div>
-                <div style={{ fontSize: "clamp(16px, 5vw, 18px)", color: "#c8b0e8" }}>
+                <div style={{ fontSize: "clamp(16px, 5vw, 18px)", color: colors.accentPurple }}>
                   {quiz.correct.hiragana}
                 </div>
               </>
@@ -332,25 +406,25 @@ export default function App() {
             {countdown > 0 && !quizResult ? (
               <div style={{
                 padding: "20px",
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(232,201,126,0.2)",
+                background: colors.cardBg,
+                border: `1px solid ${colors.cardBorder}`,
                 borderRadius: 20,
                 textAlign: "center",
-                color: "#a090c0",
+                color: colors.textSecondary,
                 fontSize: 14,
               }}>
-                Antworten werden in <span style={{ color: "#e8c97e", fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
+                Antworten werden in <span style={{ color: colors.accentGold, fontWeight: 700 }}>{countdown}</span> {countdown === 1 ? "Sekunde" : "Sekunden"} angezeigt…
               </div>
             ) : !quizResult ? (
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, width: "100%" }}>
                 {quiz.options.map(opt => {
-                  let bg = "rgba(255,255,255,0.05)";
-                  let border = "rgba(255,255,255,0.12)";
-                  let col = "#e8e0f0";
-                  let subCol = "#7060a0";
+                  let bg = colors.quizAnswerBg;
+                  let border = colors.borderDefault;
+                  let col = colors.textPrimary;
+                  let subCol = colors.textMuted;
                   if (selected !== null) {
-                    if (opt.num === quiz.correct.num) { bg = "rgba(100,220,130,0.15)"; border = "#64dc82"; col = "#64dc82"; subCol = "#4aac62"; }
-                    else if (opt.num === selected) { bg = "rgba(220,80,80,0.15)"; border = "#dc5050"; col = "#dc5050"; subCol = "#a03030"; }
+                    if (opt.num === quiz.correct.num) { bg = colors.quizCorrectBg; border = colors.success; col = colors.success; subCol = isDark ? "#4aac62" : "#22a048"; }
+                    else if (opt.num === selected) { bg = colors.quizWrongBg; border = colors.error; col = colors.error; subCol = isDark ? "#a03030" : "#c92c2c"; }
                   }
                   return (
                     <button key={opt.num} onClick={() => handleAnswer(opt)} style={{
@@ -389,13 +463,13 @@ export default function App() {
               <div style={{ textAlign: "center" }}>
                 <div style={{ fontSize: 24, marginBottom: 6 }}>{quizResult === "correct" ? "✅ Richtig!" : "❌ Falsch!"}</div>
                 {quizResult === "wrong" && (
-                  <div style={{ color: "#a090c0", fontSize: 13, marginBottom: 10 }}>
-                    Richtig war: <span style={{ color: "#e8c97e" }}>{quiz.correct.num}</span>
-                    {" · "}<span style={{ color: "#c8b0e8" }}>{quiz.correct.romaji}</span>
-                    {" · "}<span style={{ color: "#9080c0" }}>{quiz.correct.hiragana}</span>
+                  <div style={{ color: colors.textSecondary, fontSize: 13, marginBottom: 10 }}>
+                    Richtig war: <span style={{ color: colors.accentGold }}>{quiz.correct.num}</span>
+                    {" · "}<span style={{ color: colors.accentPurple }}>{quiz.correct.romaji}</span>
+                    {" · "}<span style={{ color: colors.textSecondary }}>{quiz.correct.hiragana}</span>
                   </div>
                 )}
-                <button onClick={nextQuiz} style={{ ...navBtn, background: "rgba(232,201,126,0.12)", borderColor: "rgba(232,201,126,0.5)", color: "#e8c97e", padding: "10px 28px" }}>
+                <button onClick={nextQuiz} style={{ ...navBtnStyle, background: colors.btnToggleBg, borderColor: colors.cardBorder, color: colors.accentGold, padding: "10px 28px" }}>
                   Nächste Frage →
                 </button>
               </div>
@@ -412,9 +486,9 @@ export default function App() {
               <button key={g.value} onClick={() => setFilterGroup(g.value)} style={{
                 padding: "5px 12px", borderRadius: 20, fontSize: 12,
                 border: "1px solid",
-                borderColor: filterGroup === g.value ? "#e8c97e" : "rgba(255,255,255,0.12)",
-                background: filterGroup === g.value ? "rgba(232,201,126,0.15)" : "transparent",
-                color: filterGroup === g.value ? "#e8c97e" : "#8070a0",
+                borderColor: filterGroup === g.value ? colors.accentGold : colors.borderDefault,
+                background: filterGroup === g.value ? colors.tabBgActive : "transparent",
+                color: filterGroup === g.value ? colors.accentGold : colors.textMuted,
                 cursor: "pointer",
               }}>{g.label}</button>
             ))}
@@ -427,12 +501,12 @@ export default function App() {
                 alignItems: "center",
                 gap: 12,
                 padding: "10px 16px",
-                borderBottom: "1px solid rgba(255,255,255,0.05)",
+                borderBottom: `1px solid ${colors.borderDefault}`,
               }}>
-                <span style={{ color: "#e8c97e", fontWeight: 700, fontSize: 18 }}>{n.num}</span>
-                <span style={{ fontFamily: "'Shippori Mincho', serif", color: "#c8b0e8", fontSize: 20 }}>{n.kanji}</span>
-                <span style={{ color: "#e8e0f0", fontSize: 15 }}>{n.hiragana}</span>
-                <span style={{ color: "#7060a0", fontSize: 12, fontStyle: "italic", textAlign: "right" }}>{n.romaji}</span>
+                <span style={{ color: colors.accentGold, fontWeight: 700, fontSize: 18 }}>{n.num}</span>
+                <span style={{ fontFamily: "'Shippori Mincho', serif", color: colors.accentPurple, fontSize: 20 }}>{n.kanji}</span>
+                <span style={{ color: colors.textPrimary, fontSize: 15 }}>{n.hiragana}</span>
+                <span style={{ color: colors.textMuted, fontSize: 12, fontStyle: "italic", textAlign: "right" }}>{n.romaji}</span>
               </div>
             ))}
           </div>
