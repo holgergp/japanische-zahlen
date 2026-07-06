@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildEntry, fullList } from "./numberUtils.js";
+import { buildEntry, fullList, getQuizQuestion } from "./numberUtils.js";
 import { numbersReference } from "./numbersReference.js";
 
 describe("Japanese number parsing/building logic", () => {
@@ -61,6 +61,38 @@ describe("Exhaustive comparison against independent gold standard reference data
       expect(expected, `Reference data missing for ${i}`).toBeDefined();
       expect(generated.hiragana, `Hiragana discrepancy for ${i}`).toBe(expected.hiragana);
       expect(generated.romaji, `Romaji discrepancy for ${i}`).toBe(expected.romaji);
+    }
+  });
+});
+
+describe("Quiz generation logic", () => {
+  it("should pick a valid correct answer and 3 unique distractors that match reference standards", () => {
+    for (let testRun = 0; testRun < 200; testRun++) {
+      const { correct, options } = getQuizQuestion();
+
+      // 1. Correct answer must be a valid number from our reference list
+      const refCorrect = numbersReference.find(r => r.num === correct.num);
+      expect(refCorrect, `No reference entry found for picked correct number ${correct.num}`).toBeDefined();
+      expect(correct.hiragana).toBe(refCorrect.hiragana);
+      expect(correct.romaji).toBe(refCorrect.romaji);
+
+      // 2. Options must contain exactly 4 choices
+      expect(options.length).toBe(4);
+
+      // 3. All options must be unique
+      const uniqueNums = new Set(options.map(o => o.num));
+      expect(uniqueNums.size).toBe(4);
+
+      // 4. Correct answer must be included in the options
+      expect(uniqueNums.has(correct.num)).toBe(true);
+
+      // 5. Each option must match its standard reference data
+      for (const opt of options) {
+        const refOpt = numbersReference.find(r => r.num === opt.num);
+        expect(refOpt, `No reference entry found for option number ${opt.num}`).toBeDefined();
+        expect(opt.hiragana).toBe(refOpt.hiragana);
+        expect(opt.romaji).toBe(refOpt.romaji);
+      }
     }
   });
 });
