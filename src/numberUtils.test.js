@@ -95,4 +95,20 @@ describe("Quiz generation logic", () => {
       }
     }
   });
+
+  it("should support forcing a specific question number via parameter", () => {
+    const forced64 = getQuizQuestion(64);
+    expect(forced64.correct.num).toBe(64);
+    expect(forced64.options.find(o => o.num === 64)).toBeDefined();
+
+    const forced0 = getQuizQuestion(0);
+    expect(forced0.correct.num).toBe(0);
+    expect(forced0.options.find(o => o.num === 0)).toBeDefined();
+
+    const forced100 = getQuizQuestion(100);
+    expect(forced100.correct.num).toBe(100);
+    expect(forced100.options.find(o => o.num === 100)).toBeDefined();
+
+    expect(() => getQuizQuestion(101)).toThrow("Invalid forcedNum: 101");
+  });
 });
