@@ -67,8 +67,8 @@ describe("Exhaustive comparison against independent gold standard reference data
 
 describe("Quiz generation logic", () => {
   it("should pick a valid correct answer and 3 unique distractors that match reference standards", () => {
-    for (let testRun = 0; testRun < 200; testRun++) {
-      const { correct, options } = getQuizQuestion();
+    for (let i = 0; i <= 100; i++) {
+      const { correct, options } = getQuizQuestion(i);
 
       // 1. Correct answer must be a valid number from our reference list
       const refCorrect = numbersReference.find(r => r.num === correct.num);
