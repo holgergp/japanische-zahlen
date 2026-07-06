@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildEntry, fullList } from "./numberUtils.js";
+import { numbersReference } from "./numbersReference.js";
 
 describe("Japanese number parsing/building logic", () => {
   it("should parse hardcoded basic numbers correctly", () => {
@@ -48,5 +49,18 @@ describe("Japanese number parsing/building logic", () => {
 
   it("should generate a complete list of 101 numbers (0-100)", () => {
     expect(fullList.length).toBe(101);
+  });
+});
+
+describe("Exhaustive comparison against independent gold standard reference data", () => {
+  it("should match reference readings for all numbers 0-100", () => {
+    for (let i = 0; i <= 100; i++) {
+      const generated = buildEntry(i);
+      const expected = numbersReference.find(r => r.num === i);
+      
+      expect(expected, `Reference data missing for ${i}`).toBeDefined();
+      expect(generated.hiragana, `Hiragana discrepancy for ${i}`).toBe(expected.hiragana);
+      expect(generated.romaji, `Romaji discrepancy for ${i}`).toBe(expected.romaji);
+    }
   });
 });
