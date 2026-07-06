@@ -111,4 +111,13 @@ describe("Quiz generation logic", () => {
 
     expect(() => getQuizQuestion(101)).toThrow("Invalid forcedNum: 101");
   });
+
+  it("should support default random question selection when no parameter is provided", () => {
+    const randomQuestion = getQuizQuestion();
+    expect(randomQuestion.correct).toBeDefined();
+    expect(randomQuestion.correct.num).toBeGreaterThanOrEqual(0);
+    expect(randomQuestion.correct.num).toBeLessThanOrEqual(100);
+    expect(randomQuestion.options.length).toBe(4);
+    expect(randomQuestion.options.find(o => o.num === randomQuestion.correct.num)).toBeDefined();
+  });
 });
