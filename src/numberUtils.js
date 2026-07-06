@@ -54,9 +54,11 @@ export function buildEntry(i) {
 
 export const fullList = Array.from({ length: 101 }, (_, i) => buildEntry(i));
 
-export function getQuizQuestion() {
-  const idx = Math.floor(Math.random() * fullList.length);
-  const correct = fullList[idx];
+export function getQuizQuestion(forcedNum) {
+  const correct = forcedNum !== undefined
+    ? fullList.find(x => x.num === forcedNum)
+    : fullList[Math.floor(Math.random() * fullList.length)];
+  if (!correct) throw new Error(`Invalid forcedNum: ${forcedNum}`);
   const distractors = [];
   while (distractors.length < 3) {
     const d = fullList[Math.floor(Math.random() * fullList.length)];
