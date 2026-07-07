@@ -26,10 +26,6 @@ export default function App() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("score", JSON.stringify(score));
-  }, [score]);
-
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -92,6 +88,10 @@ export default function App() {
     return defaultScore;
   });
   const [filterGroup, setFilterGroup] = useState("alle");
+
+  useEffect(() => {
+    localStorage.setItem("score", JSON.stringify(score));
+  }, [score]);
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
