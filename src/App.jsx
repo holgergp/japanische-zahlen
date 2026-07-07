@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { fullList, getQuizQuestion } from "./numberUtils.js";
+import { fullList, getQuizQuestion } from "./numberUtils";
 
 const QUIZ_MODES = [
   { id: "zahl-romaji", label: "Zahl → Romaji" },

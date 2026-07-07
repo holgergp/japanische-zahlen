@@ -15,7 +15,7 @@ import {
   act,
 } from "@testing-library/react";
 import App from "./App.jsx";
-import { fullList } from "./numberUtils.js";
+import { fullList } from "./numberUtils";
 
 // jsdom has no matchMedia; the theme effect needs it.
 beforeAll(() => {

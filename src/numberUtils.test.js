@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildEntry, fullList, getQuizQuestion } from "./numberUtils.js";
+import { buildEntry, fullList, getQuizQuestion } from "./numberUtils";
 import { numbersReference } from "./numbersReference.js";
 
 describe("Japanese number parsing/building logic", () => {
