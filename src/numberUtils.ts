@@ -76,6 +76,9 @@ export function buildEntry(i: number): NumberEntry {
 
 export const fullList = Array.from({ length: 101 }, (_, i) => buildEntry(i));
 
+// German thousands separators: 100000 → "100.000"
+export const formatNum = (n: number): string => n.toLocaleString("de-DE");
+
 // ── Irregular sound-change maps for 百 and 千 ──────────────────────────────
 // ponytail: two small literal maps vs a rule-based string transform — easier to audit
 const HYAKU_IRR: Record<

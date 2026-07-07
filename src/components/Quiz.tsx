@@ -6,6 +6,7 @@ import type {
   Score,
 } from "../types";
 import { navButtonStyle, type Colors } from "../theme";
+import { formatNum } from "../numberUtils";
 
 const QUIZ_MODES: { id: QuizMode; label: string }[] = [
   { id: "zahl-romaji", label: "Zahl → Romaji" },
@@ -172,7 +173,7 @@ export default function Quiz({
                 marginBottom: 4,
               }}
             >
-              {quiz.correct.num}
+              {formatNum(quiz.correct.num)}
             </div>
             <div
               style={{
@@ -308,7 +309,7 @@ export default function Quiz({
                     </>
                   ) : (
                     <>
-                      <span>{opt.num}</span>
+                      <span>{formatNum(opt.num)}</span>
                       <span
                         style={{
                           fontSize: 11,
@@ -340,7 +341,7 @@ export default function Quiz({
               >
                 Richtig war:{" "}
                 <span style={{ color: colors.accentGold }}>
-                  {quiz.correct.num}
+                  {formatNum(quiz.correct.num)}
                 </span>
                 {" · "}
                 <span style={{ color: colors.accentPurple }}>
