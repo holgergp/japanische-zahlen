@@ -1,4 +1,4 @@
-# Feature: Große Zahlen (100 → 100 Mio.)
+# Feature: Große Zahlen (100 → 1 Mio.)
 
 > Companion to `docs/coding-spec.md`. This is the *what/why*; the *how* is a lean
 > plan that reuses the existing `numbers` / `fullList` / `FilterGroup` machinery.
@@ -50,28 +50,30 @@ change sound. **Bold = irregular**, the rest are shown for context.
 | **8.000** | 八千 | **はっ**せん | **has**sen | hachi→has |
 | 9.000 | 九千 | きゅうせん | kyūsen | regelmäßig |
 
-### Große Einheiten — 万 (man), Obergrenze 500.000
+### Große Einheiten — 万 (man), Obergrenze 1.000.000
 
 Unlike 百 and 千, **万 itself never changes sound** (`ichiman`, `niman`, `sanman`
 … all regular). The twist at this ceiling is that the 万-part is now a *composed*
-number, not a single digit: 500.000 is "fifty ten-thousands".
+number, not a single digit: 1.000.000 is "one hundred ten-thousands".
 
 | Zahl | Kanji | Hiragana | Romaji | Hinweis |
 |------|-------|----------|--------|---------|
 | 10.000 | 一万 | いちまん | ichiman | **immer mit 一** (nie nur 万) |
 | 100.000 | 十万 | じゅうまん | jūman | 10 × 万 |
 | 200.000 | 二十万 | にじゅうまん | nijūman | 20 × 万 |
-| 500.000 | 五十万 | ごじゅうまん | gojūman | Obergrenze, 50 × 万 |
+| 500.000 | 五十万 | ごじゅうまん | gojūman | 50 × 万 |
+| 1.000.000 | 百万 | ひゃくまん | hyakuman | Obergrenze, 100 × 万 |
 
-So the only irregular readings anywhere in 0–500.000 stay confined to the 百 slot
-(3/6/8) and the 千 slot (3/8). Everything else — including the whole 万-part — is
-regular composition.
+So the only irregular readings anywhere in 0–1.000.000 stay confined to the 百
+slot (3/6/8) and the 千 slot (3/8). Everything else — including the whole 万-part —
+is regular composition; the man-part reaches exactly 100 → plain `hyaku`, no
+new rule.
 
 ## 3. Approach: a composer, not a flat list
 
-The ceiling of **500.000** means the "test larger numbers" mode must handle
+The ceiling of **1.000.000** means the "test larger numbers" mode must handle
 arbitrary values (e.g. 21.560), which a hand-written list can't cover. So extend
-`buildEntry`'s philosophy to a `buildLargeEntry(n)` for 0–500.000:
+`buildEntry`'s philosophy to a `buildLargeEntry(n)` for 0–1.000.000:
 
 ```
 n → man-part (compose ⌊n/10000⌋ via the existing 0–100 logic) + 万
@@ -81,17 +83,21 @@ n → man-part (compose ⌊n/10000⌋ via the existing 0–100 logic) + 万
 ```
 
 ~40 lines, irregular readings as two small lookup maps. The 万-part reuses the
-0–100 machinery verbatim, so no new exception rules for the top slot. The
-**overview** still shows only a curated set of important numbers (§2) — those are
-just specific `n` values run through the same composer, so there is one source of
-truth, not two.
+0–100 machinery verbatim, so no new exception rules for the top slot. At this
+ceiling the man-part spans the *full* 0–100 range and lands exactly on
+`buildEntry`'s max (⌊1.000.000/10000⌋ = 100 → `hyaku` → `hyakuman`). That is the
+clean stopping point: going higher would push the man-part past 100, forcing
+`buildEntry` to compose hundreds (`sanbyaku` etc.) recursively — a real change,
+out of scope. The **overview** still shows only a curated set of important
+numbers (§2) — those are just specific `n` values run through the same composer,
+so there is one source of truth, not two.
 
 ## 4. Implementation plan (lean, reuses existing patterns)
 
 ### 4.1 Data + composer — `src/numberUtils.ts`
 
 - Add `buildLargeEntry(n: number): NumberEntry` per §3. Guard the range
-  (`0 ≤ n ≤ 500_000`).
+  (`0 ≤ n ≤ 1_000_000`).
 - Add a curated list of the *important* numbers for the overview — just the
   `num`s plus an `irregular` flag for highlighting; readings come from the
   composer:
@@ -99,7 +105,7 @@ truth, not two.
   ```ts
   const importantLarge: { num: number; irregular?: boolean }[] = [
     { num: 100 }, { num: 200 }, { num: 300, irregular: true }, /* … */
-    { num: 10_000 }, { num: 100_000 }, { num: 500_000 },
+    { num: 10_000 }, { num: 100_000 }, { num: 500_000 }, { num: 1_000_000 },
   ];
   export const largeList = importantLarge.map((e) => ({
     ...buildLargeEntry(e.num),
@@ -128,10 +134,13 @@ from the composer (same shape as today: `{ num, hiragana, romaji }`, no kanji):
 | 21560 | にまんせんごひゃくろくじゅう | nimansengohyakurokujū |
 | 23000 | にまんさんぜん | nimansanzen |
 | 100000 | じゅうまん | jūman |
+| 300000 | さんじゅうまん | sanjūman |
 | 500000 | ごじゅうまん | gojūman |
+| 999999 | きゅうじゅうきゅうまんきゅうせんきゅうひゃくきゅうじゅうきゅう | kyūjūkyūman-kyūsen-kyūhyaku-kyūjūkyū |
+| 1000000 | ひゃくまん | hyakuman |
 
 The existing exhaustive 0–100 test stays as-is; add a test that runs
-`buildLargeEntry` against these curated rows. (Exhaustive 0–500.000 via a second
+`buildLargeEntry` against these curated rows. (Exhaustive 0–1.000.000 via a second
 independent implementation is possible but not worth the code — skip it.)
 
 ### 4.2 Overview — `src/components/NumberTable.tsx` + `FilterGroup`
@@ -178,11 +187,12 @@ change.
 
 ## 5. Scope / non-goals
 
-- **In:** composer + oracle for 0–500.000, curated overview with irregular
+- **In:** composer + oracle for 0–1.000.000, curated overview with irregular
   highlighting, a quiz scope for large numbers (fully random, 2 options, shared
   score bucket).
-- **Out (YAGNI):** numbers above 500.000, the 億 / 兆 units, counters (〜個/〜人).
-  Add only if a later lesson needs them.
+- **Out (YAGNI):** numbers above 1.000.000 (would need `buildEntry` to compose
+  hundreds in the 万-part), the 億 / 兆 units, counters (〜個/〜人). Add only if a
+  later lesson needs them.
 
 ## 6. Ground rules (from coding-spec.md, still apply)
 
