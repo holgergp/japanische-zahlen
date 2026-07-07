@@ -25,7 +25,7 @@
 - **Styling**: Inline `style` objects inside JSX only. No CSS files, no CSS-in-JS library, no external UI framework.
 - **Fonts**: Google Fonts via `<link>` in `index.html` — `Noto Sans JP` (body), `Shippori Mincho` (Japanese characters, headings)
 - **State**: React `useState` + `useCallback`. No Context, no external store.
-- **Tests**: None. Add if modifying core logic (especially `buildEntry` or quiz generation).
+- **Tests**: vitest suite (`npm run test`). File: `src/numberUtils.test.js`. Includes an exhaustive 0–100 check against `src/numbersReference.js`. Must pass before merging any logic change.
 - **Lint/Format**: None configured.
 - **Deployment**: GitHub Actions → GitHub Pages. Trigger: push to `main`.
 
@@ -35,15 +35,18 @@
 
 ```
 src/
-├── main.jsx          # React root render. Do not touch unless changing entry point.
-└── App.jsx           # THE ENTIRE APP. 418 lines. All UI, state, logic, data.
+├── main.jsx                # React root render. Do not touch unless changing entry point.
+├── App.jsx                 # All UI and state. No number logic or data here.
+├── numberUtils.js          # Number data (numbers array), buildEntry, fullList, getQuizQuestion.
+├── numbersReference.js     # Hand-maintained independent oracle for 0–100; used only in tests.
+└── numberUtils.test.js     # vitest suite — exhaustive 0–100 comparison + quiz generation tests.
 
 public/
 └── favicon.svg       # Static asset
 
 index.html            # HTML shell. Fonts loaded here. Lang="de". Base path handled by Vite config.
 vite.config.js        # Vite config. base: '/japanische-zahlen/' (or BASE_PATH env var)
-package.json          # Scripts: dev, build, preview
+package.json          # Scripts: dev, build, preview, test
 .github/workflows/
 └── deploy.yml        # CI/CD for GitHub Pages
 ```
@@ -52,7 +55,7 @@ package.json          # Scripts: dev, build, preview
 
 ## 4. Architecture
 
-This is a **single-file monolithic React app**. All state, logic, and JSX live in `App.jsx`.
+This is a **single-file monolithic React app**. All UI state and JSX live in `App.jsx`. Number logic and data live in `src/numberUtils.js`.
 
 ### State Shape
 
@@ -102,7 +105,7 @@ There are no separate component files. Everything is rendered via conditional JS
 
 ### `buildEntry(i)` — Number composition
 
-Location: `App.jsx:35`
+Location: `src/numberUtils.js`
 
 Logic:
 1. Check if `i` exists in hardcoded `numbers` array → return exact match
@@ -116,7 +119,7 @@ Logic:
 
 ### `getQuizQuestion()` — Quiz generation
 
-Location: `App.jsx:59`
+Location: `src/numberUtils.js`
 
 Logic:
 1. Pick random index from `fullList`
@@ -126,7 +129,7 @@ Logic:
 
 ### `handleAnswer(opt)` — Answer validation
 
-Location: `App.jsx:127`
+Location: `src/App.jsx`
 
 - If `quizResult` already set → ignore (prevents double-clicking)
 - Set `selected` to clicked option's `num`
@@ -194,10 +197,8 @@ Location: `App.jsx:127`
 
 ## 9. Known Issues / Tech Debt
 
-- **No tests**: The `buildEntry` function has subtle logic (dual readings). Any change here should be manually verified or ideally tested.
-- **Monolithic component**: `App.jsx` handles everything. Refactoring into smaller components would improve maintainability but is not required for small changes.
+- **Monolithic component**: `App.jsx` handles all UI. Refactoring into smaller components would improve maintainability but is not required for small changes.
 - **No accessibility**: Missing ARIA labels, focus management, screen reader support.
-- **No localStorage**: Scores reset on refresh. Quiz progress is ephemeral.
 - **Font dependency**: Relies on external Google Fonts CDN.
 
 ---
@@ -216,6 +217,7 @@ Before pushing to `main`:
 
 ```bash
 npm run dev      # Start dev server (http://localhost:5173)
+npm run test     # Run vitest suite (must pass before merging)
 npm run build    # Production build → dist/
 npm run preview  # Preview production build
 ```
