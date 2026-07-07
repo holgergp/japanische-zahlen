@@ -1,4 +1,6 @@
-export const numbers = [
+import type { NumberEntry, QuizQuestion } from "./types";
+
+export const numbers: NumberEntry[] = [
   { num: 0, kanji: "零", hiragana: "れい", romaji: "rei" },
   { num: 1, kanji: "一", hiragana: "いち", romaji: "ichi" },
   { num: 2, kanji: "二", hiragana: "に", romaji: "ni" },
@@ -44,15 +46,17 @@ export const numbers = [
 //   四 = "shi / yon"     → in compounds use "yon"  (四十 = yon-jū)
 //   七 = "shichi / nana" → in compounds use "nana"
 // The combining form is always the LAST listed reading.
-const combiningReading = (reading, separator) =>
-  reading.split(separator).at(-1).trim();
+const combiningReading = (reading: string, separator: string): string =>
+  reading.split(separator).at(-1)!.trim();
 
-export function buildEntry(i) {
+export function buildEntry(i: number): NumberEntry {
   const exact = numbers.find((n) => n.num === i);
   if (exact) return exact;
 
-  const tens = numbers.find((n) => n.num === Math.floor(i / 10));
-  const ones = numbers.find((n) => n.num === i % 10);
+  // i is 0–100 and every tens/ones component exists in `numbers`, so these
+  // finds never miss (the exhaustive test proves it).
+  const tens = numbers.find((n) => n.num === Math.floor(i / 10))!;
+  const ones = numbers.find((n) => n.num === i % 10)!;
   const hasOnes = i % 10 > 0;
 
   const kanji = tens.kanji + "十" + (hasOnes ? ones.kanji : "");
@@ -70,13 +74,13 @@ export function buildEntry(i) {
 
 export const fullList = Array.from({ length: 101 }, (_, i) => buildEntry(i));
 
-export function getQuizQuestion(forcedNum) {
+export function getQuizQuestion(forcedNum?: number): QuizQuestion {
   const correct =
     forcedNum !== undefined
       ? fullList.find((x) => x.num === forcedNum)
       : fullList[Math.floor(Math.random() * fullList.length)];
   if (!correct) throw new Error(`Invalid forcedNum: ${forcedNum}`);
-  const distractors = [];
+  const distractors: NumberEntry[] = [];
   while (distractors.length < 3) {
     const d = fullList[Math.floor(Math.random() * fullList.length)];
     if (d.num !== correct.num && !distractors.find((x) => x.num === d.num)) {
