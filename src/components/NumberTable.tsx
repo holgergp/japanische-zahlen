@@ -1,4 +1,4 @@
-import { fullList, largeList } from "../numberUtils";
+import { fullList, largeList, formatNum } from "../numberUtils";
 import type { LargeEntry } from "../numberUtils";
 import type { FilterGroup } from "../types";
 import type { Colors } from "../theme";
@@ -43,9 +43,8 @@ export default function NumberTable({
   onFilterChange,
 }: NumberTableProps) {
   // ponytail: source switches on group, same row renderer below
-  const sourceList: LargeEntry[] = LARGE_GROUPS.has(filterGroup)
-    ? largeList
-    : fullList;
+  const isLargeGroup = LARGE_GROUPS.has(filterGroup);
+  const sourceList: LargeEntry[] = isLargeGroup ? largeList : fullList;
   const filteredList = sourceList.filter((n) =>
     matchesFilter(n.num, filterGroup),
   );
@@ -109,7 +108,10 @@ export default function NumberTable({
               key={n.num}
               style={{
                 display: "grid",
-                gridTemplateColumns: "48px 56px 1fr auto",
+                // large numbers need wider num/kanji cells (e.g. 1.000.000, 二十万)
+                gridTemplateColumns: isLargeGroup
+                  ? "auto auto 1fr auto"
+                  : "48px 56px 1fr auto",
                 alignItems: "center",
                 gap: 12,
                 padding: "10px 16px",
@@ -121,15 +123,17 @@ export default function NumberTable({
                   color: colors.accentGold,
                   fontWeight: 700,
                   fontSize: 18,
+                  whiteSpace: "nowrap",
                 }}
               >
-                {n.num}
+                {formatNum(n.num)}
               </span>
               <span
                 style={{
                   fontFamily: "'Shippori Mincho', serif",
                   color: colors.accentPurple,
                   fontSize: 20,
+                  whiteSpace: "nowrap",
                 }}
               >
                 {n.kanji}
