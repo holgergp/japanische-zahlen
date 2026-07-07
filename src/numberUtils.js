@@ -13,10 +13,20 @@ export const numbers = [
   { num: 11, kanji: "十一", hiragana: "じゅういち", romaji: "jū-ichi" },
   { num: 12, kanji: "十二", hiragana: "じゅうに", romaji: "jū-ni" },
   { num: 13, kanji: "十三", hiragana: "じゅうさん", romaji: "jū-san" },
-  { num: 14, kanji: "十四", hiragana: "じゅうし／じゅうよん", romaji: "jū-shi / jū-yon" },
+  {
+    num: 14,
+    kanji: "十四",
+    hiragana: "じゅうし／じゅうよん",
+    romaji: "jū-shi / jū-yon",
+  },
   { num: 15, kanji: "十五", hiragana: "じゅうご", romaji: "jū-go" },
   { num: 16, kanji: "十六", hiragana: "じゅうろく", romaji: "jū-roku" },
-  { num: 17, kanji: "十七", hiragana: "じゅうしち／じゅうなな", romaji: "jū-shichi / jū-nana" },
+  {
+    num: 17,
+    kanji: "十七",
+    hiragana: "じゅうしち／じゅうなな",
+    romaji: "jū-shichi / jū-nana",
+  },
   { num: 18, kanji: "十八", hiragana: "じゅうはち", romaji: "jū-hachi" },
   { num: 19, kanji: "十九", hiragana: "じゅうきゅう", romaji: "jū-kyū" },
   { num: 20, kanji: "二十", hiragana: "にじゅう", romaji: "ni-jū" },
@@ -34,21 +44,26 @@ export const numbers = [
 //   四 = "shi / yon"     → in compounds use "yon"  (四十 = yon-jū)
 //   七 = "shichi / nana" → in compounds use "nana"
 // The combining form is always the LAST listed reading.
-const combiningReading = (reading, separator) => reading.split(separator).at(-1).trim();
+const combiningReading = (reading, separator) =>
+  reading.split(separator).at(-1).trim();
 
 export function buildEntry(i) {
-  const exact = numbers.find(n => n.num === i);
+  const exact = numbers.find((n) => n.num === i);
   if (exact) return exact;
 
-  const tens = numbers.find(n => n.num === Math.floor(i / 10));
-  const ones = numbers.find(n => n.num === i % 10);
+  const tens = numbers.find((n) => n.num === Math.floor(i / 10));
+  const ones = numbers.find((n) => n.num === i % 10);
   const hasOnes = i % 10 > 0;
 
-  const kanji    = tens.kanji + "十" + (hasOnes ? ones.kanji : "");
-  const hiragana = combiningReading(tens.hiragana, "／") + "じゅう"
-                 + (hasOnes ? combiningReading(ones.hiragana, "／") : "");
-  const romaji   = combiningReading(tens.romaji, " / ") + "-jū"
-                 + (hasOnes ? "-" + combiningReading(ones.romaji, " / ") : "");
+  const kanji = tens.kanji + "十" + (hasOnes ? ones.kanji : "");
+  const hiragana =
+    combiningReading(tens.hiragana, "／") +
+    "じゅう" +
+    (hasOnes ? combiningReading(ones.hiragana, "／") : "");
+  const romaji =
+    combiningReading(tens.romaji, " / ") +
+    "-jū" +
+    (hasOnes ? "-" + combiningReading(ones.romaji, " / ") : "");
 
   return { num: i, kanji, hiragana, romaji };
 }
@@ -56,14 +71,15 @@ export function buildEntry(i) {
 export const fullList = Array.from({ length: 101 }, (_, i) => buildEntry(i));
 
 export function getQuizQuestion(forcedNum) {
-  const correct = forcedNum !== undefined
-    ? fullList.find(x => x.num === forcedNum)
-    : fullList[Math.floor(Math.random() * fullList.length)];
+  const correct =
+    forcedNum !== undefined
+      ? fullList.find((x) => x.num === forcedNum)
+      : fullList[Math.floor(Math.random() * fullList.length)];
   if (!correct) throw new Error(`Invalid forcedNum: ${forcedNum}`);
   const distractors = [];
   while (distractors.length < 3) {
     const d = fullList[Math.floor(Math.random() * fullList.length)];
-    if (d.num !== correct.num && !distractors.find(x => x.num === d.num)) {
+    if (d.num !== correct.num && !distractors.find((x) => x.num === d.num)) {
       distractors.push(d);
     }
   }

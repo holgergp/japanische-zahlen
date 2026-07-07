@@ -1,13 +1,31 @@
-import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, fireEvent, cleanup, act } from "@testing-library/react";
+import {
+  describe,
+  it,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  vi,
+} from "vitest";
+import {
+  render,
+  screen,
+  fireEvent,
+  cleanup,
+  act,
+} from "@testing-library/react";
 import App from "./App.jsx";
 import { fullList } from "./numberUtils.js";
 
 // jsdom has no matchMedia; the theme effect needs it.
 beforeAll(() => {
-  window.matchMedia = window.matchMedia || (() => ({
-    matches: false, addEventListener() {}, removeEventListener() {},
-  }));
+  window.matchMedia =
+    window.matchMedia ||
+    (() => ({
+      matches: false,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
 });
 
 beforeEach(() => {
@@ -49,7 +67,9 @@ describe("Quiz interaction", () => {
     render(<App />);
     showQuizOptions();
     const correct = correctEntry().romaji;
-    const wrong = optionButtons().find((b) => b.querySelector("span").textContent !== correct);
+    const wrong = optionButtons().find(
+      (b) => b.querySelector("span").textContent !== correct,
+    );
     fireEvent.click(wrong);
     expect(screen.getByText(/✓ 0 \/ 1 richtig/)).toBeDefined();
   });
@@ -57,7 +77,9 @@ describe("Quiz interaction", () => {
   it("does not change the score when answering twice", () => {
     render(<App />);
     showQuizOptions();
-    const correctBtn = screen.getByText(correctEntry().romaji).closest("button");
+    const correctBtn = screen
+      .getByText(correctEntry().romaji)
+      .closest("button");
     fireEvent.click(correctBtn);
     fireEvent.click(correctBtn); // options unmount; guard also blocks re-scoring
     expect(screen.getByText(/✓ 1 \/ 1 richtig/)).toBeDefined();

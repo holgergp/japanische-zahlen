@@ -16,7 +16,11 @@ export const numbersReference = [
   { num: 14, hiragana: "じゅうし／じゅうよん", romaji: "jū-shi / jū-yon" },
   { num: 15, hiragana: "じゅうご", romaji: "jū-go" },
   { num: 16, hiragana: "じゅうろく", romaji: "jū-roku" },
-  { num: 17, hiragana: "じゅうしち／じゅうなな", romaji: "jū-shichi / jū-nana" },
+  {
+    num: 17,
+    hiragana: "じゅうしち／じゅうなな",
+    romaji: "jū-shichi / jū-nana",
+  },
   { num: 18, hiragana: "じゅうはち", romaji: "jū-hachi" },
   { num: 19, hiragana: "じゅうきゅう", romaji: "jū-kyū" },
   { num: 20, hiragana: "にじゅう", romaji: "ni-jū" },
