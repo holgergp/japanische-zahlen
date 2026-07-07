@@ -167,6 +167,36 @@ export default function FlashCard({
         <br />
         <span style={{ color: colors.accentPurple }}>二十三 (ni-jū-san)</span> =
         20+3 = 23
+        <br />
+        <br />
+        <strong style={{ color: colors.accentGold }}>Größere Einheiten</strong>
+        <br />
+        <span style={{ color: colors.accentPurple }}>百 (hyaku)</span> = 100 ·{" "}
+        <span style={{ color: colors.accentPurple }}>千 (sen)</span> = 1.000 ·{" "}
+        <span style={{ color: colors.accentPurple }}>万 (man)</span> = 10.000
+        <br />
+        Japanisch gruppiert in 10.000er-Schritten (万):
+        <br />
+        <span style={{ color: colors.accentPurple }}>十万 (jūman)</span> =
+        100.000 ·{" "}
+        <span style={{ color: colors.accentPurple }}>百万 (hyakuman)</span> =
+        1.000.000
+        <br />
+        Merke:{" "}
+        <span style={{ color: colors.accentPurple }}>一万 (ichiman)</span>{" "}
+        behält immer 一 (百 und 千 dagegen nicht: 100 = 百, nicht 一百).
+        <br />
+        <br />
+        <strong style={{ color: colors.accentGold }}>
+          Lautänderungen (unregelmäßig)
+        </strong>
+        <br />
+        <span style={{ color: colors.accentGold }}>三百 (sanbyaku)</span> ·{" "}
+        <span style={{ color: colors.accentGold }}>六百 (roppyaku)</span> ·{" "}
+        <span style={{ color: colors.accentGold }}>八百 (happyaku)</span>
+        <br />
+        <span style={{ color: colors.accentGold }}>三千 (sanzen)</span> ·{" "}
+        <span style={{ color: colors.accentGold }}>八千 (hassen)</span>
       </div>
     </div>
   );
