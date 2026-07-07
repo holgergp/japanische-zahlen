@@ -49,6 +49,7 @@ export default function App() {
   const [flashIdx, setFlashIdx] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [quizMode, setQuizMode] = useState<QuizMode>("zahl-romaji");
+  const [quizScope, setQuizScope] = useState<"small" | "large">("small");
   const [quiz, setQuiz] = useState<QuizQuestion>(() => getQuizQuestion());
   const [quizResult, setQuizResult] = useState<QuizResult | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
@@ -100,14 +101,27 @@ export default function App() {
   }, []);
 
   const nextQuiz = useCallback(() => {
-    setQuiz(getQuizQuestion());
+    setQuiz(
+      getQuizQuestion(undefined, quizScope === "large" ? "large" : undefined),
+    );
     setQuizResult(null);
     setSelected(null);
-  }, []);
+  }, [quizScope]);
 
   const switchQuizMode = (mode: QuizMode) => {
     setQuizMode(mode);
-    setQuiz(getQuizQuestion());
+    setQuiz(
+      getQuizQuestion(undefined, quizScope === "large" ? "large" : undefined),
+    );
+    setQuizResult(null);
+    setSelected(null);
+  };
+
+  const switchQuizScope = (scope: "small" | "large") => {
+    setQuizScope(scope);
+    setQuiz(
+      getQuizQuestion(undefined, scope === "large" ? "large" : undefined),
+    );
     setQuizResult(null);
     setSelected(null);
   };
@@ -188,12 +202,14 @@ export default function App() {
           colors={colors}
           isDark={isDark}
           quizMode={quizMode}
+          quizScope={quizScope}
           quiz={quiz}
           quizResult={quizResult}
           selected={selected}
           score={score}
           countdown={countdown}
           onSwitchMode={switchQuizMode}
+          onSwitchScope={switchQuizScope}
           onAnswer={handleAnswer}
           onNext={nextQuiz}
         />

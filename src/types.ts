@@ -9,7 +9,15 @@ export interface NumberEntry {
 
 export type QuizMode = "zahl-romaji" | "romaji-zahl";
 
-export type FilterGroup = "alle" | "0-10" | "11-19" | "20-99" | "round";
+export type FilterGroup =
+  | "alle"
+  | "0-10"
+  | "11-19"
+  | "20-99"
+  | "round"
+  | "hunderter"
+  | "tausender"
+  | "grosse-einheiten";
 
 export interface QuizQuestion {
   correct: NumberEntry;

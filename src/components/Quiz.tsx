@@ -12,16 +12,23 @@ const QUIZ_MODES: { id: QuizMode; label: string }[] = [
   { id: "romaji-zahl", label: "Romaji → Zahl" },
 ];
 
+const QUIZ_SCOPES: { id: "small" | "large"; label: string }[] = [
+  { id: "small", label: "0–100" },
+  { id: "large", label: "Große Zahlen" },
+];
+
 interface QuizProps {
   colors: Colors;
   isDark: boolean;
   quizMode: QuizMode;
+  quizScope: "small" | "large";
   quiz: QuizQuestion;
   quizResult: QuizResult | null;
   selected: number | null;
   score: Score;
   countdown: number;
   onSwitchMode: (mode: QuizMode) => void;
+  onSwitchScope: (scope: "small" | "large") => void;
   onAnswer: (opt: NumberEntry) => void;
   onNext: () => void;
 }
@@ -30,12 +37,14 @@ export default function Quiz({
   colors,
   isDark,
   quizMode,
+  quizScope,
   quiz,
   quizResult,
   selected,
   score,
   countdown,
   onSwitchMode,
+  onSwitchScope,
   onAnswer,
   onNext,
 }: QuizProps) {
@@ -55,7 +64,7 @@ export default function Quiz({
         style={{
           display: "flex",
           gap: 8,
-          marginBottom: 8,
+          marginBottom: 6,
           background: colors.cardBg,
           borderRadius: 14,
           padding: 4,
@@ -80,6 +89,39 @@ export default function Quiz({
             }}
           >
             {m.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          marginBottom: 8,
+          background: colors.cardBg,
+          borderRadius: 14,
+          padding: 4,
+          flexShrink: 0,
+        }}
+      >
+        {QUIZ_SCOPES.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => onSwitchScope(s.id)}
+            style={{
+              padding: "6px 14px",
+              borderRadius: 10,
+              border: "none",
+              background:
+                quizScope === s.id ? colors.tabBgActive : "transparent",
+              color: quizScope === s.id ? colors.accentGold : colors.textMuted,
+              cursor: "pointer",
+              fontSize: 12,
+              fontWeight: quizScope === s.id ? 700 : 400,
+              transition: "all 0.2s",
+            }}
+          >
+            {s.label}
           </button>
         ))}
       </div>
