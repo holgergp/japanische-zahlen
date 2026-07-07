@@ -56,11 +56,15 @@ describe("Exhaustive comparison against independent gold standard reference data
   it("should match reference readings for all numbers 0-100", () => {
     for (let i = 0; i <= 100; i++) {
       const generated = buildEntry(i);
-      const expected = numbersReference.find(r => r.num === i);
-      
+      const expected = numbersReference.find((r) => r.num === i);
+
       expect(expected, `Reference data missing for ${i}`).toBeDefined();
-      expect(generated.hiragana, `Hiragana discrepancy for ${i}`).toBe(expected.hiragana);
-      expect(generated.romaji, `Romaji discrepancy for ${i}`).toBe(expected.romaji);
+      expect(generated.hiragana, `Hiragana discrepancy for ${i}`).toBe(
+        expected.hiragana,
+      );
+      expect(generated.romaji, `Romaji discrepancy for ${i}`).toBe(
+        expected.romaji,
+      );
     }
   });
 });
@@ -71,8 +75,11 @@ describe("Quiz generation logic", () => {
       const { correct, options } = getQuizQuestion(i);
 
       // 1. Correct answer must be a valid number from our reference list
-      const refCorrect = numbersReference.find(r => r.num === correct.num);
-      expect(refCorrect, `No reference entry found for picked correct number ${correct.num}`).toBeDefined();
+      const refCorrect = numbersReference.find((r) => r.num === correct.num);
+      expect(
+        refCorrect,
+        `No reference entry found for picked correct number ${correct.num}`,
+      ).toBeDefined();
       expect(correct.hiragana).toBe(refCorrect.hiragana);
       expect(correct.romaji).toBe(refCorrect.romaji);
 
@@ -80,7 +87,7 @@ describe("Quiz generation logic", () => {
       expect(options.length).toBe(4);
 
       // 3. All options must be unique
-      const uniqueNums = new Set(options.map(o => o.num));
+      const uniqueNums = new Set(options.map((o) => o.num));
       expect(uniqueNums.size).toBe(4);
 
       // 4. Correct answer must be included in the options
@@ -88,8 +95,11 @@ describe("Quiz generation logic", () => {
 
       // 5. Each option must match its standard reference data
       for (const opt of options) {
-        const refOpt = numbersReference.find(r => r.num === opt.num);
-        expect(refOpt, `No reference entry found for option number ${opt.num}`).toBeDefined();
+        const refOpt = numbersReference.find((r) => r.num === opt.num);
+        expect(
+          refOpt,
+          `No reference entry found for option number ${opt.num}`,
+        ).toBeDefined();
         expect(opt.hiragana).toBe(refOpt.hiragana);
         expect(opt.romaji).toBe(refOpt.romaji);
       }
@@ -99,15 +109,15 @@ describe("Quiz generation logic", () => {
   it("should support forcing a specific question number via parameter", () => {
     const forced64 = getQuizQuestion(64);
     expect(forced64.correct.num).toBe(64);
-    expect(forced64.options.find(o => o.num === 64)).toBeDefined();
+    expect(forced64.options.find((o) => o.num === 64)).toBeDefined();
 
     const forced0 = getQuizQuestion(0);
     expect(forced0.correct.num).toBe(0);
-    expect(forced0.options.find(o => o.num === 0)).toBeDefined();
+    expect(forced0.options.find((o) => o.num === 0)).toBeDefined();
 
     const forced100 = getQuizQuestion(100);
     expect(forced100.correct.num).toBe(100);
-    expect(forced100.options.find(o => o.num === 100)).toBeDefined();
+    expect(forced100.options.find((o) => o.num === 100)).toBeDefined();
 
     expect(() => getQuizQuestion(101)).toThrow("Invalid forcedNum: 101");
   });
@@ -118,6 +128,8 @@ describe("Quiz generation logic", () => {
     expect(randomQuestion.correct.num).toBeGreaterThanOrEqual(0);
     expect(randomQuestion.correct.num).toBeLessThanOrEqual(100);
     expect(randomQuestion.options.length).toBe(4);
-    expect(randomQuestion.options.find(o => o.num === randomQuestion.correct.num)).toBeDefined();
+    expect(
+      randomQuestion.options.find((o) => o.num === randomQuestion.correct.num),
+    ).toBeDefined();
   });
 });

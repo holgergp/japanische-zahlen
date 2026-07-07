@@ -216,10 +216,13 @@ Before pushing to `main`:
 ## 11. Quick Commands
 
 ```bash
-npm run dev      # Start dev server (http://localhost:5173)
-npm run test     # Run vitest suite (must pass before merging)
-npm run build    # Production build → dist/
-npm run preview  # Preview production build
+npm run dev           # Start dev server (http://localhost:5173)
+npm run test          # Run vitest suite (must pass before merging)
+npm run lint          # ESLint (flat config, react-hooks rules)
+npm run format        # Prettier: format code in place
+npm run format:check  # Prettier: verify formatting (used in CI)
+npm run build         # Production build → dist/
+npm run preview       # Preview production build
 ```
 
 ---
