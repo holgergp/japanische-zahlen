@@ -104,4 +104,27 @@ export const numbersReference = [
   { num: 98, hiragana: "きゅうじゅうはち", romaji: "kyū-jū-hachi" },
   { num: 99, hiragana: "きゅうじゅうきゅう", romaji: "kyū-jū-kyū" },
   { num: 100, hiragana: "ひゃく", romaji: "hyaku" },
+  // Large numbers — hand-verified oracle rows for buildLargeEntry
+  { num: 300, hiragana: "さんびゃく", romaji: "sanbyaku" },
+  { num: 600, hiragana: "ろっぴゃく", romaji: "roppyaku" },
+  { num: 800, hiragana: "はっぴゃく", romaji: "happyaku" },
+  { num: 1000, hiragana: "せん", romaji: "sen" },
+  { num: 3000, hiragana: "さんぜん", romaji: "sanzen" },
+  { num: 8000, hiragana: "はっせん", romaji: "hassen" },
+  { num: 10000, hiragana: "いちまん", romaji: "ichiman" },
+  {
+    num: 21560,
+    hiragana: "にまんせんごひゃくろくじゅう",
+    romaji: "nimansengohyakurokujū",
+  },
+  { num: 23000, hiragana: "にまんさんぜん", romaji: "nimansanzen" },
+  { num: 100000, hiragana: "じゅうまん", romaji: "jūman" },
+  { num: 300000, hiragana: "さんじゅうまん", romaji: "sanjūman" },
+  { num: 500000, hiragana: "ごじゅうまん", romaji: "gojūman" },
+  {
+    num: 999999,
+    hiragana: "きゅうじゅうきゅうまんきゅうせんきゅうひゃくきゅうじゅうきゅう",
+    romaji: "kyūjūkyūman-kyūsen-kyūhyaku-kyūjūkyū",
+  },
+  { num: 1000000, hiragana: "ひゃくまん", romaji: "hyakuman" },
 ];
