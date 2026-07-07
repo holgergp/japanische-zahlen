@@ -14,7 +14,7 @@ import {
   cleanup,
   act,
 } from "@testing-library/react";
-import App from "./App.jsx";
+import App from "./App";
 import { fullList } from "./numberUtils";
 
 // jsdom has no matchMedia; the theme effect needs it.

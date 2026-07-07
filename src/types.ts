@@ -15,3 +15,7 @@ export interface QuizQuestion {
   correct: NumberEntry;
   options: NumberEntry[];
 }
+
+export type QuizResult = "correct" | "wrong";
+
+export type Score = Record<QuizMode, { correct: number; total: number }>;
