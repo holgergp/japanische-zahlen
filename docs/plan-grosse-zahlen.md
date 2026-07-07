@@ -155,9 +155,21 @@ breaks the pattern."
 
 The user wants a mode "that tests for larger numbers." Smallest change that fits
 the existing quiz: a **scope** toggle alongside the current mode switch —
-`0–100` (today's behavior) vs. `Große Zahlen`. For the large scope, pick a random
-`n` in range and build it with `buildLargeEntry`; distractors are other composed
-values so options stay plausible.
+`0–100` (today's behavior) vs. `Große Zahlen`.
+
+**Decision (v1):**
+- **Fully random numbers**, including the long "messy" ones (e.g. 487.213 →
+  `yonjūhachi-man-nanasen-nihyaku-jū-san`) — the point is to drill full
+  composition, not just the sound-change rules.
+- **2 options** (not 4): pick a random `n` via `buildLargeEntry`, plus **one**
+  randomly-picked distractor (build 1 instead of 3 in `getQuizQuestion`).
+- **Timer as-is.** Everything else in the quiz flow is unchanged.
+
+> **Deferred idea — revisit after testing the app.** If the random distractor is
+> too easy to rule out (both readings differ everywhere, so no thinking needed),
+> make the distractor the **"regularized" wrong reading** at the irregular spot
+> (300 `sanbyaku` vs `sanhyaku`, 600 `roppyaku` vs `rokuhyaku`), so the question
+> tests "did the sound change happen?". Kept out of v1 on purpose.
 
 **Score: one shared bucket.** Scope does *not* enter the score key — `QuizMode`
 (`zahl-romaji` / `romaji-zahl`) stays the only dimension, so large-number answers
@@ -167,7 +179,8 @@ change.
 ## 5. Scope / non-goals
 
 - **In:** composer + oracle for 0–500.000, curated overview with irregular
-  highlighting, a quiz scope for large numbers (shared score bucket).
+  highlighting, a quiz scope for large numbers (fully random, 2 options, shared
+  score bucket).
 - **Out (YAGNI):** numbers above 500.000, the 億 / 兆 units, counters (〜個/〜人).
   Add only if a later lesson needs them.
 
