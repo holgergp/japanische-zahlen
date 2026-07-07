@@ -1,4 +1,5 @@
-import { fullList } from "../numberUtils";
+import { fullList, largeList } from "../numberUtils";
+import type { LargeEntry } from "../numberUtils";
 import type { FilterGroup } from "../types";
 import type { Colors } from "../theme";
 
@@ -8,13 +9,25 @@ const groups: { label: string; value: FilterGroup }[] = [
   { label: "11–19", value: "11-19" },
   { label: "20–99", value: "20-99" },
   { label: "Runde Zahlen", value: "round" },
+  { label: "Hunderter", value: "hunderter" },
+  { label: "Tausender", value: "tausender" },
+  { label: "Große Einheiten", value: "grosse-einheiten" },
 ];
+
+const LARGE_GROUPS = new Set<FilterGroup>([
+  "hunderter",
+  "tausender",
+  "grosse-einheiten",
+]);
 
 function matchesFilter(num: number, filter: FilterGroup): boolean {
   if (filter === "0-10") return num <= 10;
   if (filter === "11-19") return num >= 11 && num <= 19;
   if (filter === "20-99") return num >= 20 && num <= 99;
   if (filter === "round") return num % 10 === 0;
+  if (filter === "hunderter") return num >= 100 && num < 1_000;
+  if (filter === "tausender") return num >= 1_000 && num < 10_000;
+  if (filter === "grosse-einheiten") return num >= 10_000;
   return true; // "alle"
 }
 
@@ -29,7 +42,11 @@ export default function NumberTable({
   filterGroup,
   onFilterChange,
 }: NumberTableProps) {
-  const filteredList = fullList.filter((n) =>
+  // ponytail: source switches on group, same row renderer below
+  const sourceList: LargeEntry[] = LARGE_GROUPS.has(filterGroup)
+    ? largeList
+    : fullList;
+  const filteredList = sourceList.filter((n) =>
     matchesFilter(n.num, filterGroup),
   );
   return (
@@ -85,51 +102,61 @@ export default function NumberTable({
           flex: 1,
         }}
       >
-        {filteredList.map((n) => (
-          <div
-            key={n.num}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "48px 56px 1fr auto",
-              alignItems: "center",
-              gap: 12,
-              padding: "10px 16px",
-              borderBottom: `1px solid ${colors.borderDefault}`,
-            }}
-          >
-            <span
+        {filteredList.map((n) => {
+          const irr = (n as LargeEntry).irregular === true;
+          return (
+            <div
+              key={n.num}
               style={{
-                color: colors.accentGold,
-                fontWeight: 700,
-                fontSize: 18,
+                display: "grid",
+                gridTemplateColumns: "48px 56px 1fr auto",
+                alignItems: "center",
+                gap: 12,
+                padding: "10px 16px",
+                borderBottom: `1px solid ${colors.borderDefault}`,
               }}
             >
-              {n.num}
-            </span>
-            <span
-              style={{
-                fontFamily: "'Shippori Mincho', serif",
-                color: colors.accentPurple,
-                fontSize: 20,
-              }}
-            >
-              {n.kanji}
-            </span>
-            <span style={{ color: colors.textPrimary, fontSize: 15 }}>
-              {n.hiragana}
-            </span>
-            <span
-              style={{
-                color: colors.textMuted,
-                fontSize: 12,
-                fontStyle: "italic",
-                textAlign: "right",
-              }}
-            >
-              {n.romaji}
-            </span>
-          </div>
-        ))}
+              <span
+                style={{
+                  color: colors.accentGold,
+                  fontWeight: 700,
+                  fontSize: 18,
+                }}
+              >
+                {n.num}
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Shippori Mincho', serif",
+                  color: colors.accentPurple,
+                  fontSize: 20,
+                }}
+              >
+                {n.kanji}
+              </span>
+              <span
+                style={{
+                  color: irr ? colors.accentGold : colors.textPrimary,
+                  fontSize: 15,
+                  fontWeight: irr ? 700 : undefined,
+                }}
+              >
+                {n.hiragana}
+              </span>
+              <span
+                style={{
+                  color: irr ? colors.accentGold : colors.textMuted,
+                  fontSize: 12,
+                  fontStyle: "italic",
+                  textAlign: "right",
+                  fontWeight: irr ? 700 : undefined,
+                }}
+              >
+                {n.romaji}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
