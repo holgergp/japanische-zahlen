@@ -21,7 +21,7 @@
 
 - **Framework**: React 19 (no routing, single-page)
 - **Bundler**: Vite 8
-- **Language**: Mixed migration to TypeScript. Pure logic/data (`numberUtils.ts`, `types.ts`) is TS and type-checked (`npm run typecheck`); the UI (`App.jsx`, `main.jsx`) is still JSX, compiled via `allowJs`. New UI components should be authored in `.tsx`.
+- **Language**: TypeScript for logic and UI (`App.tsx`, `src/components/*.tsx`, `theme.ts`, `numberUtils.ts`, `types.ts`), type-checked via `npm run typecheck`. The entry point (`main.jsx`) and tests (`*.test.jsx`/`.js`) remain JS, compiled via `allowJs`. New components should be `.tsx`.
 - **Styling**: Inline `style` objects inside JSX only. No CSS files, no CSS-in-JS library, no external UI framework.
 - **Fonts**: Google Fonts via `<link>` in `index.html` — `Noto Sans JP` (body), `Shippori Mincho` (Japanese characters, headings)
 - **State**: React `useState` + `useCallback`. No Context, no external store.
@@ -36,11 +36,18 @@
 ```
 src/
 ├── main.jsx                # React root render. Do not touch unless changing entry point.
-├── App.jsx                 # All UI and state. No number logic or data here.
+├── App.tsx                 # Shell: owns all state + handlers, renders Header + the 3 tab components.
+├── components/
+│   ├── Header.tsx          # Title + theme toggle. Presentational (props only).
+│   ├── FlashCard.tsx       # "Lernen" tab. Presentational (props only).
+│   ├── Quiz.tsx            # "Quiz" tab. Presentational; owns QUIZ_MODES.
+│   └── NumberTable.tsx     # "Alle Zahlen" tab. Owns filter groups; reads fullList.
+├── theme.ts                # buildColors(isDark) → color tokens; navButtonStyle helper.
 ├── numberUtils.ts          # Number data (numbers array), buildEntry, fullList, getQuizQuestion.
-├── types.ts                # Shared types: NumberEntry, QuizMode, FilterGroup, QuizQuestion.
+├── types.ts                # Shared types: NumberEntry, QuizMode, FilterGroup, QuizResult, Score, QuizQuestion.
 ├── numbersReference.js     # Hand-maintained independent oracle for 0–100; used only in tests.
-└── numberUtils.test.js     # vitest suite — exhaustive 0–100 comparison + quiz generation tests.
+├── numberUtils.test.js     # vitest suite — exhaustive 0–100 comparison + quiz generation tests.
+└── App.test.jsx            # vitest + Testing Library — quiz interaction + flashcard tests.
 
 public/
 └── favicon.svg       # Static asset
@@ -58,7 +65,7 @@ tsconfig.json         # TypeScript config (allowJs; strict; noEmit — Vite does
 
 ## 4. Architecture
 
-This is a **single-file monolithic React app**. All UI state and JSX live in `App.jsx`. Number logic and data live in `src/numberUtils.ts`.
+`App.tsx` is a **shell that owns all state** (theme, tab, flashcard, quiz, score, filter) plus the handlers, and renders `Header` and one of three presentational tab components (`FlashCard`, `Quiz`, `NumberTable`). The tab components are prop-driven and hold no state, so tab switches don't reset anything. Color tokens live in `src/theme.ts`; number logic and data in `src/numberUtils.ts`.
 
 ### State Shape
 
@@ -92,15 +99,15 @@ const fullList = Array.from({ length: 101 }, (_, i) => buildEntry(i));
 
 **Key insight**: Numbers 21-99 are algorithmically composed from tens + ones. `buildEntry()` handles the Japanese reading rules (e.g., 四 uses `yon` when combined: 四十 = `yon-jū`, not `shi-jū`).
 
-### Component Structure (all inline in App.jsx)
+### Component Structure
 
-There are no separate component files. Everything is rendered via conditional JSX:
+`App.tsx` renders the header + tab bar, then one tab component (each in `src/components/`):
 
-- **Header** — Title, subtitle, course info
-- **Tab Bar** — 3 tabs: "Lernen", "Quiz", "Alle Zahlen"
-- **Tab 0: Lernen** — Flashcard (click to flip) + prev/next buttons + progress counter + tip box
-- **Tab 1: Quiz** — Mode switcher + score display + question card + 4 answer buttons (layout varies by mode) + result feedback
-- **Tab 2: Alle Zahlen** — Filter chips + grid list (num, kanji, hiragana, romaji)
+- **`Header.tsx`** — Title, subtitle, course info + theme toggle
+- **Tab Bar** — 3 tabs, inline in `App.tsx`: "Lernen", "Quiz", "Alle Zahlen"
+- **`FlashCard.tsx`** (Tab 0: Lernen) — Flashcard (click to flip) + prev/next buttons + progress counter + tip box
+- **`Quiz.tsx`** (Tab 1: Quiz) — Mode switcher + score display + question card + 4 answer buttons (layout varies by mode) + result feedback
+- **`NumberTable.tsx`** (Tab 2: Alle Zahlen) — Filter chips + grid list (num, kanji, hiragana, romaji)
 
 ---
 
@@ -132,7 +139,7 @@ Logic:
 
 ### `handleAnswer(opt)` — Answer validation
 
-Location: `src/App.jsx`
+Location: `src/App.tsx` (passed to `Quiz` as the `onAnswer` prop)
 
 - If `quizResult` already set → ignore (prevents double-clicking)
 - Set `selected` to clicked option's `num`
@@ -167,9 +174,9 @@ Location: `src/App.jsx`
 
 ## 7. Important Decisions & Constraints
 
-1. **Single File**: Everything lives in `App.jsx`. If asked to add features, prefer extracting to new component files only if explicitly requested or if the file grows >600 lines.
+1. **Shell + presentational components**: State + handlers live in `App.tsx`; each tab is a prop-driven component in `src/components/`. Keep state in `App.tsx` and pass it down — don't move state into the tab components (they unmount on tab switch).
 2. **No External Dependencies**: Only React + Vite. Do NOT install UI libraries (MUI, Chakra, etc.) or state management (Redux, Zustand). Vanilla React only.
-3. **No CSS Files**: All styles are inline `style` props. If adding new UI, follow this pattern.
+3. **No CSS Files**: All styles are inline `style` props sourced from `theme.ts` color tokens. If adding new UI, follow this pattern.
 4. **German UI**: All user-facing text must remain in German.
 5. **Dual Readings**: 4 and 7 have two readings. The algorithm correctly prefers the compound reading for tens place.
 6. **Deployment Path**: The app lives at `/japanische-zahlen/`. The Vite `base` config handles this. Do not change unless the deployment URL changes.
@@ -179,17 +186,17 @@ Location: `src/App.jsx`
 ## 8. Common Tasks & How-To
 
 ### Add a new tab
-1. Add label to `TABS` array (`App.jsx:78`)
-2. Add conditional render block `{tab === 3 && (...)}`
-3. Add any new state above the render
+1. Add label to `TABS` array in `App.tsx`
+2. Add a new component in `src/components/` and render it with `{tab === 3 && (...)}`
+3. Add any new state (and its handlers) in `App.tsx`, passed down as props
 
 ### Add quiz modes
-1. Add entry to `QUIZ_MODES` array (`App.jsx:73`)
-2. Add initial score shape in `useState` (`App.jsx:98`)
-3. Add conditional rendering logic in Quiz tab
+1. Add entry to `QUIZ_MODES` array in `src/components/Quiz.tsx` and the `QuizMode` union in `types.ts`
+2. Add initial score shape in the `score` `useState` (`App.tsx`)
+3. Add conditional rendering logic in `Quiz.tsx`
 
 ### Modify number data
-- Edit `numbers` array at top of `App.jsx`
+- Edit `numbers` array at top of `src/numberUtils.ts`
 - Verify `buildEntry` handles edge cases (especially dual readings with `／` and ` / ` delimiters)
 
 ### Add styling changes
@@ -200,7 +207,6 @@ Location: `src/App.jsx`
 
 ## 9. Known Issues / Tech Debt
 
-- **Monolithic component**: `App.jsx` handles all UI. Refactoring into smaller components would improve maintainability but is not required for small changes.
 - **No accessibility**: Missing ARIA labels, focus management, screen reader support.
 - **Font dependency**: Relies on external Google Fonts CDN.
 
