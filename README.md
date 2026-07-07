@@ -60,8 +60,8 @@ Die App ist dann erreichbar unter:
 
 ## Technik
 
-- [React 18](https://react.dev/)
-- [Vite 5](https://vitejs.dev/)
+- [React 19](https://react.dev/)
+- [Vite 8](https://vitejs.dev/)
 - [Google Fonts: Noto Sans JP + Shippori Mincho](https://fonts.google.com/)
 - Kein externes UI-Framework – reines CSS-in-JS
 

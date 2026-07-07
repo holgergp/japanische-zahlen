@@ -26,6 +26,10 @@ export default function App() {
     return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("score", JSON.stringify(score));
+  }, [score]);
+
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
@@ -76,9 +80,16 @@ export default function App() {
   const [quiz, setQuiz] = useState(() => getQuizQuestion());
   const [quizResult, setQuizResult] = useState(null);
   const [selected, setSelected] = useState(null);
-  const [score, setScore] = useState({
-    "zahl-romaji": { correct: 0, total: 0 },
-    "romaji-zahl": { correct: 0, total: 0 },
+  const [score, setScore] = useState(() => {
+    const defaultScore = {
+      "zahl-romaji": { correct: 0, total: 0 },
+      "romaji-zahl": { correct: 0, total: 0 },
+    };
+    try {
+      const parsed = JSON.parse(localStorage.getItem("score"));
+      if (parsed && parsed["zahl-romaji"] && parsed["romaji-zahl"]) return parsed;
+    } catch {}
+    return defaultScore;
   });
   const [filterGroup, setFilterGroup] = useState("alle");
   const [countdown, setCountdown] = useState(3);

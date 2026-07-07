@@ -30,24 +30,25 @@ export const numbers = [
   { num: 100, kanji: "百", hiragana: "ひゃく", romaji: "hyaku" },
 ];
 
+// 4 and 7 read differently when combined into a larger number:
+//   四 = "shi / yon"     → in compounds use "yon"  (四十 = yon-jū)
+//   七 = "shichi / nana" → in compounds use "nana"
+// The combining form is always the LAST listed reading.
+const combiningReading = (reading, separator) => reading.split(separator).at(-1).trim();
+
 export function buildEntry(i) {
   const exact = numbers.find(n => n.num === i);
   if (exact) return exact;
-  const tens = Math.floor(i / 10);
-  const ones = i % 10;
-  const t = numbers.find(n => n.num === tens);
-  const o = numbers.find(n => n.num === ones);
 
-  const tKanji = tens === 1 ? "十" : t.kanji + "十";
-  const kanji = tKanji + (ones > 0 ? o.kanji : "");
+  const tens = numbers.find(n => n.num === Math.floor(i / 10));
+  const ones = numbers.find(n => n.num === i % 10);
+  const hasOnes = i % 10 > 0;
 
-  const tHira = tens === 1 ? "じゅう" : (t.hiragana.split("／")[1]?.trim() ?? t.hiragana) + "じゅう";
-  const oHira = ones > 0 ? (o.hiragana.split("／")[1]?.trim() ?? o.hiragana) : "";
-  const hiragana = tHira + oHira;
-
-  const tRom = tens === 1 ? "jū" : (t.romaji.split(" / ")[1]?.trim() ?? t.romaji) + "-jū";
-  const oRom = ones > 0 ? (o.romaji.split(" / ")[1]?.trim() ?? o.romaji) : "";
-  const romaji = tRom + (ones > 0 ? "-" + oRom : "");
+  const kanji    = tens.kanji + "十" + (hasOnes ? ones.kanji : "");
+  const hiragana = combiningReading(tens.hiragana, "／") + "じゅう"
+                 + (hasOnes ? combiningReading(ones.hiragana, "／") : "");
+  const romaji   = combiningReading(tens.romaji, " / ") + "-jū"
+                 + (hasOnes ? "-" + combiningReading(ones.romaji, " / ") : "");
 
   return { num: i, kanji, hiragana, romaji };
 }
@@ -66,6 +67,10 @@ export function getQuizQuestion(forcedNum) {
       distractors.push(d);
     }
   }
-  const options = [...distractors, correct].sort(() => Math.random() - 0.5);
+  const options = [...distractors, correct];
+  for (let k = options.length - 1; k > 0; k--) {
+    const j = Math.floor(Math.random() * (k + 1));
+    [options[k], options[j]] = [options[j], options[k]];
+  }
   return { correct, options };
 }
